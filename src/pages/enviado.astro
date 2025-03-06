@@ -1,0 +1,47 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Obtener los parámetros de la URL
+const url = new URL(Astro.request.url);
+const Nombre = url.searchParams.get("Nombre") || "Participante";
+const Apellido = url.searchParams.get("Apellido") || "";
+const Telefono = url.searchParams.get("Telefono") || "";
+---
+
+<Layout>
+  <main
+    class="min-h-screen bg-black text-white flex items-center justify-center p-4"
+  >
+    <div class="max-w-4xl w-full bg-white rounded-lg shadow-lg p-8 text-black">
+      <h1 class="text-3xl font-bold text-center mb-8">
+        ¡Gracias por participar, {Nombre}
+        {Apellido}!
+      </h1>
+      <div class="space-y-6">
+        <p class="text-lg">
+          Para completar tu participación, realiza una transferencia bancaria a
+          la siguiente cuenta:
+        </p>
+        <div class="bg-gray-100 p-6 rounded-lg">
+          <ul class="space-y-4">
+            <li><strong>Alias:</strong> real.733.emisor.mp</li>
+            <li><strong>CVU:</strong> 0000003100060298247257</li>
+            <li><strong>Titular:</strong> IPAR MARKETING SAS</li>
+            <li><strong>CUIT:</strong> 30-71792733-4</li>
+          </ul>
+        </div>
+        <p class="text-lg">
+          Una vez realizada la transferencia, envía el comprobante a nuestro
+          WhatsApp para validar tu participación.
+        </p>
+        <a
+          href={`https://wa.me/549${Telefono}`}
+          target="_blank"
+          class="inline-block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+        >
+          Enviar comprobante por WhatsApp
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>

@@ -144,7 +144,7 @@ const logos = [
     // Validar campos vacíos
     if (!data.Nombre || !data.Apellido || !data.Telefono) {
       alert("Por favor, complete todos los campos.");
-      modal.classList.add("hidden");
+      modal.classList.add("hidden"); // Ocultar el modal si hay campos vacíos
       return;
     }
 
@@ -156,9 +156,9 @@ const logos = [
       });
 
       if (response.ok) {
-        alert("Enviado correctamente");
-        // Redirigir a la página de "gracias por tu contacto"
-        // window.location.href = "/graciasportucontacto";
+        // Redirigir a /enviado con los datos como parámetros en la URL
+        const params = new URLSearchParams(data).toString();
+        window.location.href = `/enviado?${params}`;
       } else {
         alert("Error al guardar los datos");
       }
