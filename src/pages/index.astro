@@ -10,9 +10,13 @@ const logos = [
   { src: "/images/planx5.png", title: "Plan X5 Argentina" },
 ];
 
-// Generar un número único basado en un número de serie incremental
+// Generar un número único basado en la fecha y hora actual en milisegundos
 const generarNumeroUnico = () => {
-  return 1234; // new Date();
+  // const storedNumero = localStorage.getItem("numeroCupon");
+  // if (storedNumero) return storedNumero;
+  const nuevoNumero = Date.now() % 1000000;
+  // localStorage.setItem("numeroCupon", nuevoNumero);
+  return nuevoNumero;
 };
 
 const numeroCupon = generarNumeroUnico();
@@ -25,7 +29,7 @@ const numeroCupon = generarNumeroUnico();
     >
       <!-- Talón lateral para corte -->
       <div
-        class="w-1/4 bg-gray-200 flex flex-col justify-between p-4 border-r border-dashed border-gray-400 text-center"
+        class="w-full md:w-1/4 bg-gray-200 flex flex-col justify-between p-4 border-r border-dashed border-gray-400 text-center"
       >
         <h2 class="text-xl font-bold">Número</h2>
         <p id="numeroCupon" class="text-2xl font-extrabold text-gray-800">
@@ -35,20 +39,14 @@ const numeroCupon = generarNumeroUnico();
       </div>
 
       <!-- Contenido principal del cupón -->
-      <div class="w-3/4 p-6 flex flex-col justify-between">
+      <div class="w-full md:w-3/4 p-6 flex flex-col justify-between">
         <h1 class="text-3xl font-bold text-center text-black mb-4">
           Bono Contribución
         </h1>
         <div class="flex flex-col md:flex-row gap-4">
           <!-- Formulario -->
           <div class="w-full md:w-1/2">
-            <form
-              id="sorteoForm"
-              action="#"
-              method="POST"
-              class="space-y-2"
-              onsubmit="handleSubmit(event)"
-            >
+            <form id="sorteoForm" class="space-y-2">
               <div>
                 <input
                   type="text"
@@ -56,7 +54,7 @@ const numeroCupon = generarNumeroUnico();
                   name="Nombre"
                   required
                   placeholder="Nombre"
-                  class="w-full p-1 border border-gray-300 rounded"
+                  class="w-full p-2 border border-gray-300 rounded text-black"
                 />
               </div>
               <div>
@@ -66,7 +64,7 @@ const numeroCupon = generarNumeroUnico();
                   name="Apellido"
                   required
                   placeholder="Apellido"
-                  class="w-full p-1 border border-gray-300 rounded"
+                  class="w-full p-2 border border-gray-300 rounded text-black"
                 />
               </div>
               <div>
@@ -76,7 +74,7 @@ const numeroCupon = generarNumeroUnico();
                   name="Telefono"
                   required
                   placeholder="Teléfono"
-                  class="w-full p-1 border border-gray-300 rounded"
+                  class="w-full p-2 border border-gray-300 rounded text-black"
                 />
               </div>
               <button
@@ -103,7 +101,7 @@ const numeroCupon = generarNumeroUnico();
               Sorteo el <strong>Fecha en formato largo</strong> en la premiación
               de la carrera.
             </p>
-            <div class="flex space-x-4">
+            <div class="flex flex-wrap justify-center gap-4">
               {
                 logos.map((logo) => (
                   <img
@@ -124,32 +122,36 @@ const numeroCupon = generarNumeroUnico();
 
 <!-- Script Enviar Formulario -->
 <script is:inline>
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const form = document.getElementById("sorteoForm");
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    data.NumeroCupon = document.getElementById("numeroCupon").textContent;
+  document.addEventListener("DOMContentLoaded", () => {
+    document
+      .getElementById("sorteoForm")
+      .addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        data.NumeroCupon = document.getElementById("numeroCupon").textContent;
 
-    if (!data.Nombre || !data.Apellido || !data.Telefono) {
-      alert("Por favor, complete todos los campos.");
-      return;
-    }
+        if (!data.Nombre || !data.Apellido || !data.Telefono) {
+          alert("Por favor, complete todos los campos.");
+          return;
+        }
 
-    try {
-      const response = await fetch("/api/save.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        try {
+          const response = await fetch("/api/save.json", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (response.ok) {
+            window.location.href = `/enviado?${new URLSearchParams(data).toString()}`;
+          } else {
+            alert("Error al guardar los datos");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Error al enviar el formulario");
+        }
       });
-      if (response.ok) {
-        window.location.href = `/enviado?${new URLSearchParams(data).toString()}`;
-      } else {
-        alert("Error al guardar los datos");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Error al enviar el formulario");
-    }
-  }
+  });
 </script>
