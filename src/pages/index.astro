@@ -1,8 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-const number = Math.trunc(Math.random() * 1000); // Genera un número entre 0 y 999
-const formattedNumber = number.toString().padStart(6, "0"); // Rellena con ceros a la izquierda hasta 6 dígitos
 const PrimerPremio = "Auto 0km";
 const SegundoPremio = "otra cosa";
 
@@ -25,9 +23,6 @@ const logos = [
         <!-- Formulario -->
         <div class="w-full md:w-1/2">
           <form id="sorteoForm" action="#" method="POST" class="space-y-6">
-            <p class="block text-sm font-medium text-gray-700">
-              Nº: {formattedNumber}
-            </p>
             <div>
               <label
                 for="nombre"
@@ -38,6 +33,21 @@ const logos = [
                 id="nombre"
                 name="nombre"
                 required
+                autocomplete="given-name"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label
+                for="apellido"
+                class="block text-sm font-medium text-gray-700">Apellido:</label
+              >
+              <input
+                type="text"
+                id="apellido"
+                name="apellido"
+                required
+                autocomplete="family-name"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -47,10 +57,11 @@ const logos = [
                 class="block text-sm font-medium text-gray-700">Teléfono:</label
               >
               <input
-                type="text"
+                type="tel"
                 id="telefono"
                 name="telefono"
                 required
+                autocomplete="tel"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -80,8 +91,16 @@ const logos = [
             > en la premiación de la carrera.
           </p>
           <div class="flex space-x-4">
-            <img src="/ruta/al/logo1.png" alt="Logo 1" class="w-24 h-auto" />
-            <img src="/ruta/al/logo2.png" alt="Logo 2" class="w-24 h-auto" />
+            {
+              logos.map((logo) => (
+                <img
+                  src={logo.src}
+                  alt={logo.title}
+                  class="w-24 h-auto"
+                  title={logo.title}
+                />
+              ))
+            }
           </div>
         </div>
       </div>
@@ -94,11 +113,11 @@ const logos = [
     .getElementById("sorteoForm")
     .addEventListener("submit", function (event) {
       event.preventDefault();
-      const numero = document.getElementById("numero").value;
       const nombre = document.getElementById("nombre").value;
+      const apellido = document.getElementById("apellido").value;
       const telefono = document.getElementById("telefono").value;
 
-      if (numero && nombre && telefono) {
+      if (nombre && apellido && telefono) {
         window.location.href =
           "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=TU_PREFERENCE_ID";
       } else {
