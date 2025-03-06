@@ -1,1 +1,110 @@
 @import "tailwindcss";
+
+/* Definición de variables de colores en :root */
+:root {
+  /* Primary: Rojo vibrante */
+  --color-primary: #F43F5E;
+  --color-primary-light: #F96B7A;
+  --color-primary-lighter: #FF9AA0;
+  --color-primary-dark: #D92C50;
+  --color-primary-darker: #BF243F;
+
+  /* Secondary: Gris oscuro */
+  --color-secondary: #333333;
+  --color-secondary-light: #4D4D4D;
+  --color-secondary-lighter: #666666;
+  --color-secondary-dark: #262626;
+  --color-secondary-darker: #1A1A1A;
+
+  /* Tertiary: Gris muy claro */
+  --color-tertiary: #F5F5F5;
+  --color-tertiary-light: #FFFFFF;
+  --color-tertiary-lighter: #FFFFFF;
+  --color-tertiary-dark: #E0E0E0;
+  --color-tertiary-darker: #CCCCCC;
+
+  /* Complementary: Dorado/ámbar */
+  --color-complementary: #FFB300;
+  --color-complementary-light: #FFCB42;
+  --color-complementary-lighter: #FFDC73;
+  --color-complementary-dark: #E6A700;
+  --color-complementary-darker: #CC9300;
+
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+}
+
+/* Clases para fondos */
+.bg-primary { background-color: var(--color-primary); }
+.bg-primary-light { background-color: var(--color-primary-light); }
+.bg-primary-lighter { background-color: var(--color-primary-lighter); }
+.bg-primary-dark { background-color: var(--color-primary-dark); }
+.bg-primary-darker { background-color: var(--color-primary-darker); }
+
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-secondary-light { background-color: var(--color-secondary-light); }
+.bg-secondary-lighter { background-color: var(--color-secondary-lighter); }
+.bg-secondary-dark { background-color: var(--color-secondary-dark); }
+.bg-secondary-darker { background-color: var(--color-secondary-darker); }
+
+.bg-tertiary { background-color: var(--color-tertiary); }
+.bg-tertiary-light { background-color: var(--color-tertiary-light); }
+.bg-tertiary-lighter { background-color: var(--color-tertiary-lighter); }
+.bg-tertiary-dark { background-color: var(--color-tertiary-dark); }
+.bg-tertiary-darker { background-color: var(--color-tertiary-darker); }
+
+.bg-complementary { background-color: var(--color-complementary); }
+.bg-complementary-light { background-color: var(--color-complementary-light); }
+.bg-complementary-lighter { background-color: var(--color-complementary-lighter); }
+.bg-complementary-dark { background-color: var(--color-complementary-dark); }
+.bg-complementary-darker { background-color: var(--color-complementary-darker); }
+
+/* Clases para textos */
+.text-primary { color: var(--color-primary); }
+.text-primary-light { color: var(--color-primary-light); }
+.text-primary-lighter { color: var(--color-primary-lighter); }
+.text-primary-dark { color: var(--color-primary-dark); }
+.text-primary-darker { color: var(--color-primary-darker); }
+
+.text-secondary { color: var(--color-secondary); }
+.text-secondary-light { color: var(--color-secondary-light); }
+.text-secondary-lighter { color: var(--color-secondary-lighter); }
+.text-secondary-dark { color: var(--color-secondary-dark); }
+.text-secondary-darker { color: var(--color-secondary-darker); }
+
+.text-tertiary { color: var(--color-tertiary); }
+.text-tertiary-light { color: var(--color-tertiary-light); }
+.text-tertiary-lighter { color: var(--color-tertiary-lighter); }
+.text-tertiary-dark { color: var(--color-tertiary-dark); }
+.text-tertiary-darker { color: var(--color-tertiary-darker); }
+
+.text-complementary { color: var(--color-complementary); }
+.text-complementary-light { color: var(--color-complementary-light); }
+.text-complementary-lighter { color: var(--color-complementary-lighter); }
+.text-complementary-dark { color: var(--color-complementary-dark); }
+.text-complementary-darker { color: var(--color-complementary-darker); }
+
+/* Sombras personalizadas */
+.shadow-custom {
+  box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, 0.2);
+}
+.shadow-glow {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+}
+.shadow-bottom {
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+}
+.shadow-double {
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5), -4px -4px 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Alturas personalizadas */
+.h-104 { height: 26rem; }
+.h-112 { height: 28rem; }
+.h-120 { height: 30rem; }
+.h-128 { height: 32rem; }
+.h-136 { height: 34rem; }
+.h-144 { height: 36rem; }
+
+/* Padding personalizado */
+.p-18 { padding: 4.5rem; }
