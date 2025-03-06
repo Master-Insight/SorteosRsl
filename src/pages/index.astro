@@ -1,7 +1,108 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const number = Math.trunc(Math.random() * 1000); // Genera un número entre 0 y 999
+const formattedNumber = number.toString().padStart(6, "0"); // Rellena con ceros a la izquierda hasta 6 dígitos
+const PrimerPremio = "Auto 0km";
+const SegundoPremio = "otra cosa";
+
+const logos = [
+  { src: "/images/rsl.png", title: "Rally Sprint Latan" },
+  { src: "/images/actc.png", title: "Asociación Corredores Turismo Carretera" },
+  { src: "/images/planx5.png", title: "Plan X5 Argentina" },
+];
 ---
 
 <Layout>
-  <p>aaa</p>
+  <main
+    class="min-h-screen bg-black text-white flex items-center justify-center p-4"
+  >
+    <div class="max-w-4xl w-full bg-white rounded-lg shadow-lg p-8">
+      <h1 class="text-3xl font-bold text-center text-black mb-8">
+        Bono Contribución
+      </h1>
+      <div class="flex flex-col md:flex-row gap-8">
+        <!-- Formulario -->
+        <div class="w-full md:w-1/2">
+          <form id="sorteoForm" action="#" method="POST" class="space-y-6">
+            <p class="block text-sm font-medium text-gray-700">
+              Nº: {formattedNumber}
+            </p>
+            <div>
+              <label
+                for="nombre"
+                class="block text-sm font-medium text-gray-700">Nombre:</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label
+                for="telefono"
+                class="block text-sm font-medium text-gray-700">Teléfono:</label
+              >
+              <input
+                type="text"
+                id="telefono"
+                name="telefono"
+                required
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Participar
+            </button>
+          </form>
+        </div>
+
+        <!-- Información de Premios y Logos -->
+        <div class="w-full md:w-1/2 text-black">
+          <h2 class="text-2xl font-bold mb-4">Premios</h2>
+          <ul class="space-y-2 mb-6">
+            <li>
+              1º Premio: <span class="font-extrabold">{PrimerPremio}</span>
+            </li>
+            <li>
+              2º Premio: <span class="font-extrabold">{SegundoPremio}</span>
+            </li>
+          </ul>
+          <p class="text-sm mb-6">
+            Sorteo el <strong class="font-semibold"
+              >fecha en formato largo</strong
+            > en la premiación de la carrera.
+          </p>
+          <div class="flex space-x-4">
+            <img src="/ruta/al/logo1.png" alt="Logo 1" class="w-24 h-auto" />
+            <img src="/ruta/al/logo2.png" alt="Logo 2" class="w-24 h-auto" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </Layout>
+
+<script>
+  document
+    .getElementById("sorteoForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+      const numero = document.getElementById("numero").value;
+      const nombre = document.getElementById("nombre").value;
+      const telefono = document.getElementById("telefono").value;
+
+      if (numero && nombre && telefono) {
+        window.location.href =
+          "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=TU_PREFERENCE_ID";
+      } else {
+        alert("Por favor, complete todos los campos.");
+      }
+    });
+</script>
