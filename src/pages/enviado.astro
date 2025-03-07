@@ -34,13 +34,22 @@ const Telefono = url.searchParams.get("Telefono") || "";
           Una vez realizada la transferencia, envía el comprobante a nuestro
           WhatsApp para validar tu participación.
         </p>
-        <a
-          href={`https://wa.me/549${Telefono}`}
-          target="_blank"
-          class="inline-block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-        >
-          Enviar comprobante por WhatsApp
-        </a>
+        <div class="flex justify-between">
+          <a
+            href={`https://wa.me/549${Telefono}`}
+            target="_blank"
+            class="inline-block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            Enviar comprobante por WhatsApp
+          </a>
+          <a
+            href={`/`}
+            target="_blank"
+            class="inline-block bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-bñue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Volver al inicio
+          </a>
+        </div>
       </div>
     </div>
   </main>
