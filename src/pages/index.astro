@@ -99,29 +99,42 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
   </style>
 
   <main
-    class="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative"
+    class="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative max-w-full overflow-hidden"
   >
     <!-- Imagen de fondo general -->
     <img src={urlImagen} alt="Autos de Rally" class="background-image rally" />
 
     <div
-      class="max-w-5xl w-full bg-white rounded-lg shadow-lg flex flex-col md:flex-row border-4 border-dashed border-gray-400 relative content"
+      class="max-w-5xl w-full bg-white rounded-lg shadow-lg flex flex-col md:flex-row border-4 border-dashed border-gray-400 relative content max-w-full overflow-hidden"
     >
+      <!-- Imagen de fondo visible solo en mobile -->
+      <div
+        class="absolute inset-0 object-contain bg-center opacity-[0.075] md:hidden"
+        style={`background-image: url(${urlImagen})`}
+      >
+      </div>
+
       <!-- Talón lateral para corte -->
       <div
         class="w-full md:w-1/4 bg-gray-200 flex flex-col justify-between p-4 border-r border-dashed border-gray-400 text-center numero-section"
       >
         <!-- Imagen de fondo en la sección del número -->
-        <img src={imgNumSection} alt="Auto Sorteo" />
-        <h2 class="text-xl font-bold text-gray-400">Número</h2>
-        <p id="numeroCupon" class="text-2xl font-extrabold text-gray-800">
-          <!-- El número se generará dinámicamente en el navegador -->
+        <img
+          src={imgNumSection}
+          alt="Auto Sorteo"
+          class="absolute inset-0 w-full h-full object-cover opacity-5"
+        />
+        <h2 class="text-xl font-bold text-gray-400 relative">Número</h2>
+        <p
+          id="numeroCupon"
+          class="text-2xl font-extrabold text-gray-800 relative"
+        >
         </p>
-        <p class="text-sm text-gray-600">Conserva este cupón</p>
+        <p class="text-sm text-gray-600 relative">Conserva este cupón</p>
       </div>
 
       <!-- Contenido principal del cupón -->
-      <div class="w-full md:w-3/4 p-6 flex flex-col justify-between">
+      <div class="w-full md:w-3/4 p-6 flex flex-col justify-between relative">
         <h1 class="text-3xl font-bold text-center text-black mb-4">
           Bono Contribución
         </h1>
@@ -129,42 +142,35 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
           <!-- Formulario -->
           <div class="w-full md:w-1/2">
             <form id="sorteoForm" class="space-y-2">
-              <div>
-                <input
-                  type="text"
-                  id="Nombre"
-                  name="Nombre"
-                  required
-                  placeholder="Nombre"
-                  class="w-full p-2 border border-gray-300 rounded text-black"
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  id="Apellido"
-                  name="Apellido"
-                  required
-                  placeholder="Apellido"
-                  class="w-full p-2 border border-gray-300 rounded text-black"
-                />
-              </div>
-              <div>
-                <input
-                  type="tel"
-                  id="Telefono"
-                  name="Telefono"
-                  required
-                  placeholder="Teléfono"
-                  class="w-full p-2 border border-gray-300 rounded text-black"
-                />
-              </div>
+              <input
+                type="text"
+                id="Nombre"
+                name="Nombre"
+                required
+                placeholder="Nombre"
+                class="w-full p-2 border border-gray-300 rounded text-black"
+              />
+              <input
+                type="text"
+                id="Apellido"
+                name="Apellido"
+                required
+                placeholder="Apellido"
+                class="w-full p-2 border border-gray-300 rounded text-black"
+              />
+              <input
+                type="tel"
+                id="Telefono"
+                name="Telefono"
+                required
+                placeholder="Teléfono"
+                class="w-full p-2 border border-gray-300 rounded text-black"
+              />
               <button
                 type="submit"
                 class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                >Participar</button
               >
-                Participar
-              </button>
             </form>
           </div>
 
@@ -204,18 +210,26 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
     </div>
 
     <!-- Modal para el primer premio -->
-    <div id="modalPremio" class="modal">
-      <div class="modal-content">
-        <img src={imagenPrimerPremio} alt="Auto Premio" id="modalImagen" />
+    <div
+      id="modalPremio"
+      class="modal hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
+    >
+      <div
+        class="modal-content bg-white p-6 rounded-lg w-4/5 max-w-md text-center"
+      >
+        <img
+          src={imagenPrimerPremio}
+          alt="Auto Premio"
+          id="modalImagen"
+          class="w-full h-auto cursor-pointer"
+        />
       </div>
     </div>
   </main>
 </Layout>
 
-<!-- Script para generar el número único, manejar el formulario y el modal -->
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
-    // Función para generar un número único
     const generarNumeroUnico = () => {
       const storedNumero = Number(localStorage.getItem("numeroCupon"));
       if (storedNumero) return storedNumero;
@@ -224,13 +238,8 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
       return nuevoNumero;
     };
 
-    // Mostrar el número único en el DOM
-    const numeroCuponElement = document.getElementById("numeroCupon");
-    if (numeroCuponElement) {
-      numeroCuponElement.textContent = generarNumeroUnico();
-    }
+    document.getElementById("numeroCupon").textContent = generarNumeroUnico();
 
-    // Manejar el envío del formulario
     document
       .getElementById("sorteoForm")
       .addEventListener("submit", async (event) => {
@@ -262,16 +271,12 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
         }
       });
 
-    // Manejar el modal del primer premio
-    const modal = document.getElementById("modalPremio");
-    const modalImagen = document.getElementById("modalImagen");
-
     document.getElementById("primerPremio").addEventListener("click", () => {
-      modal.classList.add("open");
+      document.getElementById("modalPremio").classList.remove("hidden");
     });
 
-    modalImagen.addEventListener("click", () => {
-      modal.classList.remove("open");
+    document.getElementById("modalImagen").addEventListener("click", () => {
+      document.getElementById("modalPremio").classList.add("hidden");
     });
   });
 </script>
