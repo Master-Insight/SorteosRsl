@@ -10,30 +10,112 @@ const logos = [
   { src: "/images/planx5.png", title: "Plan X5 Argentina" },
 ];
 
-// Generar un número único basado en la fecha y hora actual en milisegundos
-const generarNumeroUnico = () => {
-  // const storedNumero = localStorage.getItem("numeroCupon");
-  // if (storedNumero) return storedNumero;
-  const nuevoNumero = Date.now() % 1000000;
-  // localStorage.setItem("numeroCupon", nuevoNumero);
-  return nuevoNumero;
-};
+const urlImagen = "/images/RS-POSTER-CARRERA-DIBUJOS-REMERA-1.webp";
+const imagenPrimerPremio = "/images/SORTEO.webp";
+const imgNumSection = "/images/planx5.png";
 
-const numeroCupon = generarNumeroUnico();
+// Fecha manual (año, mes (base 0), día)
+const fechaSorteo = new Date(2025, 2, 8); // 8 de marzo de 2025
+const opcionesFecha = { weekday: "long", day: "numeric", month: "long" };
+const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
+  fechaSorteo,
+);
 ---
 
 <Layout>
-  <main class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+  <style>
+    /* Estilos para las imágenes de fondo */
+    .background-image {
+      position: absolute;
+      z-index: 1;
+      opacity: 0.1;
+      object-fit: contain;
+    }
+    .background-image.rally {
+      top: 10%;
+      left: 5%;
+      width: 100%;
+    }
+    .background-image.auto {
+      bottom: 10%;
+      right: 5%;
+      width: 30%;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+    /* Estilo específico para la sección del número */
+    .numero-section {
+      position: relative;
+      overflow: hidden;
+    }
+    .numero-section img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.05;
+      z-index: 1;
+    }
+    /* Estilos para el modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.open {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 60%;
+      max-width: 600px;
+      text-align: center;
+    }
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+      }
+    }
+  </style>
+
+  <main
+    class="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative"
+  >
+    <!-- Imagen de fondo general -->
+    <img src={urlImagen} alt="Autos de Rally" class="background-image rally" />
+
     <div
-      class="max-w-5xl w-full bg-white rounded-lg shadow-lg flex flex-col md:flex-row border-4 border-dashed border-gray-400 relative"
+      class="max-w-5xl w-full bg-white rounded-lg shadow-lg flex flex-col md:flex-row border-4 border-dashed border-gray-400 relative content"
     >
       <!-- Talón lateral para corte -->
       <div
-        class="w-full md:w-1/4 bg-gray-200 flex flex-col justify-between p-4 border-r border-dashed border-gray-400 text-center"
+        class="w-full md:w-1/4 bg-gray-200 flex flex-col justify-between p-4 border-r border-dashed border-gray-400 text-center numero-section"
       >
-        <h2 class="text-xl font-bold">Número</h2>
+        <!-- Imagen de fondo en la sección del número -->
+        <img src={imgNumSection} alt="Auto Sorteo" />
+        <h2 class="text-xl font-bold text-gray-400">Número</h2>
         <p id="numeroCupon" class="text-2xl font-extrabold text-gray-800">
-          {numeroCupon}
+          <!-- El número se generará dinámicamente en el navegador -->
         </p>
         <p class="text-sm text-gray-600">Conserva este cupón</p>
       </div>
@@ -91,15 +173,18 @@ const numeroCupon = generarNumeroUnico();
             <h2 class="text-2xl font-bold mb-2">Premios</h2>
             <ul class="mb-4">
               <li>
-                1º Premio: <span class="font-extrabold">{PrimerPremio}</span>
+                1º Premio: <span
+                  class="font-extrabold cursor-pointer hover:text-blue-600"
+                  id="primerPremio">{PrimerPremio}</span
+                >
               </li>
               <li>
                 2º Premio: <span class="font-extrabold">{SegundoPremio}</span>
               </li>
             </ul>
             <p class="text-sm mb-4">
-              Sorteo el <strong>Fecha en formato largo</strong> en la premiación
-              de la carrera.
+              Sorteo el <strong>{fechaFormateada}</strong> en la premiación de la
+              carrera.
             </p>
             <div class="flex flex-wrap justify-center gap-4">
               {
@@ -117,12 +202,35 @@ const numeroCupon = generarNumeroUnico();
         </div>
       </div>
     </div>
+
+    <!-- Modal para el primer premio -->
+    <div id="modalPremio" class="modal">
+      <div class="modal-content">
+        <img src={imagenPrimerPremio} alt="Auto Premio" id="modalImagen" />
+      </div>
+    </div>
   </main>
 </Layout>
 
-<!-- Script Enviar Formulario -->
+<!-- Script para generar el número único, manejar el formulario y el modal -->
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
+    // Función para generar un número único
+    const generarNumeroUnico = () => {
+      const storedNumero = Number(localStorage.getItem("numeroCupon"));
+      if (storedNumero) return storedNumero;
+      const nuevoNumero = Date.now() % 1000000;
+      localStorage.setItem("numeroCupon", String(nuevoNumero));
+      return nuevoNumero;
+    };
+
+    // Mostrar el número único en el DOM
+    const numeroCuponElement = document.getElementById("numeroCupon");
+    if (numeroCuponElement) {
+      numeroCuponElement.textContent = generarNumeroUnico();
+    }
+
+    // Manejar el envío del formulario
     document
       .getElementById("sorteoForm")
       .addEventListener("submit", async (event) => {
@@ -153,5 +261,17 @@ const numeroCupon = generarNumeroUnico();
           alert("Error al enviar el formulario");
         }
       });
+
+    // Manejar el modal del primer premio
+    const modal = document.getElementById("modalPremio");
+    const modalImagen = document.getElementById("modalImagen");
+
+    document.getElementById("primerPremio").addEventListener("click", () => {
+      modal.classList.add("open");
+    });
+
+    modalImagen.addEventListener("click", () => {
+      modal.classList.remove("open");
+    });
   });
 </script>
