@@ -99,13 +99,13 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
   </style>
 
   <main
-    class="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative max-w-full overflow-hidden"
+    class="min-h-screen md:min-h-9/12 bg-gray-100 flex items-center justify-center p-4 relative w-full overflow-hidden"
   >
     <!-- Imagen de fondo general -->
     <img src={urlImagen} alt="Autos de Rally" class="background-image rally" />
 
     <div
-      class="max-w-5xl w-full bg-white rounded-lg shadow-lg flex flex-col md:flex-row border-4 border-dashed border-gray-400 relative content max-w-full overflow-hidden"
+      class="max-w-5xl w-full bg-white rounded-lg shadow-lg flex flex-col md:flex-row border-4 border-dashed border-gray-400 relative content overflow-hidden"
     >
       <!-- Imagen de fondo visible solo en mobile -->
       <div
@@ -214,16 +214,15 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
       id="modalPremio"
       class="modal hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
     >
-      <div
-        class="modal-content bg-white p-6 rounded-lg w-4/5 max-w-md text-center"
-      >
-        <img
-          src={imagenPrimerPremio}
-          alt="Auto Premio"
-          id="modalImagen"
-          class="w-full h-auto cursor-pointer"
-        />
-      </div>
+      <img
+        src={imagenPrimerPremio}
+        alt="Auto Premio"
+        id="modalImagen"
+        class="w-full h-auto cursor-pointer"
+      />
+      <p class="text-red-600 text-sm mb-2">
+        🚨 Imagen de muestra, el auto puede variar 🚨
+      </p>
     </div>
   </main>
 </Layout>
@@ -271,12 +270,26 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
         }
       });
 
-    document.getElementById("primerPremio").addEventListener("click", () => {
+    // Abrir Modal Premio
+    const abrirModal = () => {
       document.getElementById("modalPremio").classList.remove("hidden");
-    });
+    };
+    document
+      .getElementById("primerPremio")
+      .addEventListener("click", abrirModal);
+    document
+      .getElementById("primerPremio")
+      .addEventListener("touchstart", abrirModal);
 
-    document.getElementById("modalImagen").addEventListener("click", () => {
+    // Cerrar Modal Premio
+    const cerrarModal = () => {
       document.getElementById("modalPremio").classList.add("hidden");
-    });
+    };
+    document
+      .getElementById("modalImagen")
+      .addEventListener("click", cerrarModal);
+    document
+      .getElementById("modalImagen")
+      .addEventListener("touchstart", cerrarModal);
   });
 </script>
