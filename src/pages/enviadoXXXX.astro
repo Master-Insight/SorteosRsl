@@ -1,0 +1,55 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Obtener los parámetros de la URL
+const url = new URL(Astro.request.url);
+const Nombre = url.searchParams.get("Nombre") || "Participante";
+const Apellido = url.searchParams.get("Apellido") || "";
+const Telefono = url.searchParams.get("Telefono") || "";
+---
+
+<Layout>
+  <main
+    class="min-h-screen bg-black text-white flex items-center justify-center p-4"
+  >
+    <div class="max-w-xl w-full bg-white rounded-lg shadow-lg p-6 text-black">
+      <h1 class="text-2xl md:text-3xl font-bold text-center mb-6">
+        ¡Gracias por participar, {Nombre}
+        {Apellido}!
+      </h1>
+      <div class="space-y-4">
+        <p class="text-base md:text-lg text-center">
+          Para completar tu participación, realiza una transferencia bancaria a
+          la siguiente cuenta:
+        </p>
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <ul class="space-y-2 text-sm md:text-base">
+            <li><strong>Alias:</strong> real.733.emisor.mp</li>
+            <li><strong>CVU:</strong> 0000003100060298247257</li>
+            <li><strong>Titular:</strong> IPAR MARKETING SAS</li>
+            <li><strong>CUIT:</strong> 30-71792733-4</li>
+          </ul>
+        </div>
+        <p class="text-base md:text-lg text-center">
+          Una vez realizada la transferencia, envía el comprobante a nuestro
+          WhatsApp para validar tu participación.
+        </p>
+        <div class="flex flex-col md:flex-row gap-3">
+          <a
+            href={`https://wa.me/549${Telefono}`}
+            target="_blank"
+            class="w-full h-12 flex items-center justify-center bg-green-600 text-white rounded-md text-center hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            Enviar comprobante por WhatsApp
+          </a>
+          <a
+            href={`/`}
+            class="w-full h-12 flex items-center justify-center bg-blue-600 text-white rounded-md text-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

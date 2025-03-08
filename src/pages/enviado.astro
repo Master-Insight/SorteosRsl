@@ -6,6 +6,7 @@ const url = new URL(Astro.request.url);
 const Nombre = url.searchParams.get("Nombre") || "Participante";
 const Apellido = url.searchParams.get("Apellido") || "";
 const Telefono = url.searchParams.get("Telefono") || "";
+const linkPago = "https://mpago.la/1TFD7F1";
 ---
 
 <Layout>
@@ -19,32 +20,34 @@ const Telefono = url.searchParams.get("Telefono") || "";
       </h1>
       <div class="space-y-4">
         <p class="text-base md:text-lg text-center">
-          Para completar tu participación, realiza una transferencia bancaria a
-          la siguiente cuenta:
+          Para completar tu participación, haz clic en el enlace de pago de
+          Mercado Pago:
         </p>
-        <div class="bg-gray-100 p-4 rounded-lg">
-          <ul class="space-y-2 text-sm md:text-base">
-            <li><strong>Alias:</strong> real.733.emisor.mp</li>
-            <li><strong>CVU:</strong> 0000003100060298247257</li>
-            <li><strong>Titular:</strong> IPAR MARKETING SAS</li>
-            <li><strong>CUIT:</strong> 30-71792733-4</li>
-          </ul>
+        <!-- Botón de pago con Mercado Pago -->
+        <div class="flex justify-center">
+          <!-- <a
+            href={linkPago}
+            target="_blank"
+            class="w-full md:w-auto h-12 flex items-center justify-center bg-blue-600 text-white rounded-md text-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Pagar con Mercado Pago
+          </a> -->
+          <a href={linkPago} target="_blank" class="inline-block">
+            <img
+              src="/images/mercado-pago-logo.svg"
+              alt="Pagar con Mercado Pago"
+              class="w-48 h-auto m-6"
+            />
+          </a>
         </div>
         <p class="text-base md:text-lg text-center">
-          Una vez realizada la transferencia, envía el comprobante a nuestro
-          WhatsApp para validar tu participación.
+          Una vez realizado el pago, tu participación se confirmará
+          automáticamente.
         </p>
-        <div class="flex flex-col md:flex-row gap-3">
+        <div class="flex justify-center">
           <a
-            href={`https://wa.me/549${Telefono}`}
-            target="_blank"
-            class="w-full h-12 flex items-center justify-center bg-green-600 text-white rounded-md text-center hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-          >
-            Enviar comprobante por WhatsApp
-          </a>
-          <a
-            href={`/`}
-            class="w-full h-12 flex items-center justify-center bg-blue-600 text-white rounded-md text-center hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            href="/"
+            class="w-full md:w-auto h-12 flex items-center justify-center bg-gray-600 text-white rounded-md text-center hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 p-3"
           >
             Volver al inicio
           </a>
