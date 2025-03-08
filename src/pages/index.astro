@@ -43,7 +43,7 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
     }
     .content {
       position: relative;
-      z-index: 1;
+      z-index: 30;
     }
     /* Estilo específico para la sección del número */
     .numero-section {
@@ -255,12 +255,20 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
       .addEventListener("submit", async (event) => {
         event.preventDefault();
         const form = event.target;
+        const submitButton = form.querySelector("button[type='submit']");
+
+        // Cambiar el texto del botón y deshabilitarlo
+        submitButton.textContent = "Enviando...";
+        submitButton.disabled = true;
+
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
         data.NumeroCupon = document.getElementById("numeroCupon").textContent;
 
         if (!data.Nombre || !data.Apellido || !data.Telefono) {
           alert("Por favor, complete todos los campos.");
+          submitButton.textContent = "Participar"; // Restaurar texto
+          submitButton.disabled = false; // Habilitar botón
           return;
         }
 
@@ -274,10 +282,14 @@ const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
             window.location.href = `/enviado?${new URLSearchParams(data).toString()}`;
           } else {
             alert("Error al guardar los datos");
+            submitButton.textContent = "Participar"; // Restaurar texto
+            submitButton.disabled = false; // Habilitar botón
           }
         } catch (error) {
           console.error(error);
           alert("Error al enviar el formulario");
+          submitButton.textContent = "Participar"; // Restaurar texto
+          submitButton.disabled = false; // Habilitar botón
         }
       });
 
