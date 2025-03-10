@@ -15,6 +15,7 @@ export default defineConfig({
   },
   env: {
     schema: {
+      BASE_URL: envField.string({ context: "server", access: "secret" }),
       ID_GOOGLE: envField.string({ context: "server", access: "secret" }),
       SHEETS: envField.string({ context: "server", access: "secret" }),
       GOOGLE_SHEETS_ID: envField.string({ context: "server", access: "secret" }),
