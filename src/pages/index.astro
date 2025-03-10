@@ -1,8 +1,24 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "@/layouts/Layout.astro";
+import { fetchConfigData } from "@/utils/fetchdata.js";
+import { parseFecha } from "@/utils/parseFecha.js";
 
-const PrimerPremio = "Auto 0km";
-const SegundoPremio = "Otra cosa";
+// export const prerender = false;
+
+// termino y condiciones
+// https://www.x5argentina.com/rally-spring/
+
+// Obtener datos en el servidor antes de renderizar la página
+const configData = await fetchConfigData();
+console.log("configData: ", configData);
+
+const PrimerPremio = configData["1 Premio"] || "Auto 0km";
+// const SegundoPremio = configData["2 Premio"] || "Otra cosa";
+const fechaSorteo = parseFecha(configData["Proxima Fecha"]); // 23/03/2025
+const fechaFormateada = new Intl.DateTimeFormat("es-AR", {
+  dateStyle: "full",
+  timeZone: "America/Argentina/Buenos_Aires",
+}).format(fechaSorteo);
 
 const logos = [
   { src: "/images/rsl.png", title: "Rally Sprint Latan" },
@@ -13,13 +29,6 @@ const logos = [
 const urlImagen = "/images/RS-POSTER-CARRERA-DIBUJOS-REMERA-1.webp";
 const imagenPrimerPremio = "/images/SORTEO.webp";
 const imgNumSection = "/images/planx5.png";
-
-// Fecha manual (año, mes (base 0), día)
-const fechaSorteo = new Date(2025, 2, 23); // 23 de marzo de 2025
-const opcionesFecha = { weekday: "long", day: "numeric", month: "long" };
-const fechaFormateada = new Intl.DateTimeFormat("es-ES", opcionesFecha).format(
-  fechaSorteo,
-);
 ---
 
 <Layout>
