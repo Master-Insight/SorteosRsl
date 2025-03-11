@@ -10,6 +10,13 @@ const year = new Date().getFullYear();
       <p class="text-sm text-white sm:order-first sm:mt-0">
         &copy; RSRallySprint <strong class="text-red-500">{year}</strong>
       </p>
+      <!-- Enlace a Bases y Condiciones -->
+      <a
+        href="/bases-y-condiciones"
+        class="text-sm text-white hover:text-red-500"
+      >
+        Bases y Condiciones
+      </a>
       <Insight />
     </div>
   </div>
@@ -18,5 +25,8 @@ const year = new Date().getFullYear();
 <style>
   footer p {
     font-family: "Saira", sans-serif;
+  }
+  footer a {
+    margin-left: 15px;
   }
 </style>
