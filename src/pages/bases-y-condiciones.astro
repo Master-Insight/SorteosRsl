@@ -1,0 +1,210 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { fetchConfigData } from "@/utils/fetchdata";
+import { parseFecha } from "@/utils/parseFecha";
+import { numeroALetras } from "@/utils/numeroALetras";
+
+const configData = await fetchConfigData();
+console.log(configData);
+
+/*
+EJEMPLO DE configData:
+{
+  Concepto: 'Valor',
+  'Proxima Fecha': '23/03/2025',
+  '1 Premio': 'Auto 0 km',
+  '2 Premio': '',
+  '3 Premio': '',
+  '4 Premio': '',
+  '5 Premio': '',
+  '1 Importe': '5000000',
+  '2 Importe': '',
+  '3 Importe': '',
+  '4 Importe': '',
+  '5 Importe': ''
+}
+*/
+
+const fechaRaw = configData["Proxima Fecha"] ?? "23/03/2025";
+const parsedFecha = parseFecha(fechaRaw);
+const formattedFecha = parsedFecha
+  ? parsedFecha.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
+  : "Fecha no válida";
+
+// Extracción del premio e importe
+const premio = configData["1 Premio"] ?? "Auto 0 km";
+const importePremioRaw = configData["1 Importe"] ?? "";
+
+// Convierte el importe a número
+const importePremioNumero = Number(importePremioRaw);
+
+console.log(numeroALetras(5000000));
+
+// Formatea el importe en letras
+const importeEnLetras = numeroALetras(
+  importePremioNumero,
+  "peso",
+  "pesos",
+  "centavo",
+  "centavos",
+);
+
+// Formatea el importe en números con separador de miles y decimales
+const importeEnNumeros = importePremioNumero.toLocaleString("es-AR", {
+  style: "currency",
+  currency: "ARS",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+// Genera la representación completa del importe en letras y números
+const importeFormateado = `${importeEnLetras} (${importeEnNumeros})`;
+---
+
+<Layout>
+  <section class="max-w-3xl mx-auto bg-white shadow-md rounded p-6">
+    <div class="text-center my-8">
+      <h1 class="text-4xl font-bold text-gray-800">
+        Sorteo Rally Spring Latam
+      </h1>
+    </div>
+    <h3 class="text-2xl font-semibold mb-4 text-black">
+      BASES Y CONDICIONES DEL SORTEO
+    </h3>
+    <ol class="list-decimal list-inside space-y-4 text-gray-700">
+      <li>
+        El presente sorteo, “Sorteo Rally Spring Latam”, (en adelante, el
+        «Sorteo») es organizado por IPAR MARKETING SAS conjuntamente con PLAN X5
+        (En adelante, el «Organizador»), el cual queda reservado exclusivamente
+        para cualquier persona que asista al evento Rally Spring Latam
+        Arrecifes, y quedará sujeto a las siguientes bases y condiciones (en
+        adelante, las “Bases”). El sorteo es sin obligación de compra.
+      </li>
+      <li>
+        Sólo pueden participar de esta acción las personas físicas mayores de
+        edad con capacidad legal para contratar, que cumplan con los términos y
+        condiciones establecidos en estas bases. No podrán participar los
+        directivos y empleados del Organizador, de las personas físicas y/o
+        jurídicas vinculadas al organizador.
+      </li>
+      <li>
+        Cada participante recibirá un cupón donde deberán consignar los datos
+        personales que se requieran. Dicho sorteo se llevará a cabo en las
+        fechas establecidas en el punto 1 entre los asistentes al evento. El
+        sorteo se efectuará frente a Escribana/o Pública/o y con la presencia de
+        5 testigos que den fe del mismo.
+      </li>
+      <li>
+        El sorteo se realizará el día <strong>{formattedFecha}</strong>, entre
+        todos los/as participantes que cumplan con los requisitos dispuestos en
+        las presentes “Bases”.
+      </li>
+      <li>
+        El premio consta de <strong>{premio}</strong>. El premio exhibido en
+        redes sociales y publicidad es a modo ilustrativo. Correrán a cargo
+        del/la ganador/a todos los impuestos y/o gastos (actuales o futuros)
+        –cualquiera que sea su naturaleza– que pudieran derivar del premio,
+        tales como gastos de patente, sellados, fletes, transferencia y
+        pre-entrega del automotor sorteado, o cualquier otro gasto que pudiera
+        existir. La cesión de derechos de la factura al/la ganador/a estará a
+        cargo del Organizador.
+      </li>
+      <li>
+        El plazo de entrega del premio al ganador es de hasta 90 días desde la
+        fecha del sorteo.
+      </li>
+      <li>
+        El/la ganador/a al momento del sorteo deberá estar presente, caso
+        contrario se volverá a sortear nuevamente. Para el caso de que el premio
+        no pueda ser adjudicado a ningún/a participante del presente sorteo, el
+        Organizador fijará una nueva fecha a fin de realizar un nuevo sorteo. El
+        premio no podrá ser transferido, ni cedido a un tercero, siendo de uso y
+        goce exclusivo del/la ganador/a.
+      </li>
+      <li>
+        El Organizador podrá exhibir el nombre y apellido de los/as ganadores/as
+        en todo tipo de medios de comunicación masiva y pública. Los/as
+        participantes del Sorteo, por el solo hecho de participar en el mismo,
+        autorizan al Organizador, en caso de resultar ganadores/as, a publicar
+        sus datos personales consignados en los registros del Organizador por
+        los medios y formas de comunicación que crea conveniente, a su exclusivo
+        criterio y decisión, como así también sus fotografías y/o videos para
+        fines publicitarios, sin derecho a compensación alguna.
+      </li>
+      <li>
+        Cualquier error en los datos consignados por los/as participantes en los
+        cupones del sorteo es de única y exclusiva responsabilidad de los/as
+        mismos/as. El/la ganador/a tendrá que presentar documento nacional de
+        identidad a fin de acreditar su identidad y con la documentación que
+        resulte necesaria a fines de efectuar todos los trámites relativos al
+        premio por el cual ha sido sorteado/a.
+      </li>
+      <li>
+        En caso de que el/la ganador/a no se haga presente en la fecha designada
+        y comunicada por el Organizador, según lo establecido en la cláusula
+        precedente, con la documentación solicitada, perderá de forma automática
+        la posibilidad de acceso al premio, sin derecho a indemnización alguna.
+      </li>
+      <li>
+        El/la Ganador/a podrá elegir el cambio del premio por un valor en
+        dinero, recibiendo en este supuesto el importe de <strong
+          >{importeFormateado}</strong
+        >.
+      </li>
+      <li>
+        El Organizador no se responsabilizará por fallas en la fabricación,
+        siendo responsabilidad del fabricante, como así tampoco por la cobertura
+        de garantía. Del mismo modo, el Organizador no se responsabilizará por
+        ningún daño personal o material, enfermedad o lesiones de cualquier
+        naturaleza o pérdida (directa, indirecta y/o consecuente) ocasionada a
+        los/as participantes del presente sorteo y/o terceras personas, debido a
+        o en relación al uso del premio objeto del sorteo una vez entregado el
+        mismo, cualquiera hubiere sido su causa.
+      </li>
+      <li>
+        El Organizador podrá, a su exclusivo criterio, modificar la fecha y/o
+        horario de realización del Sorteo, el premio a entregar por otros de
+        iguales características y valores o introducir modificaciones a
+        cualquiera de los puntos precedentes dando, en su caso, la debida
+        comunicación y publicidad, y llevando a cabo, de corresponder, los
+        procedimientos legales necesarios. El Organizador podrá suspender,
+        modificar, total o parcialmente, las presentes “Bases”, cuando
+        sobrevengan situaciones no imputables al Organizador, sin que ello
+        genere derecho a compensación alguna a favor de los/as participantes del
+        sorteo.
+      </li>
+      <li>
+        El Organizador se reserva la facultad de decisión respecto de toda
+        situación no prevista en estas “Bases”, y las resoluciones que adopte al
+        respecto serán definitivas e inapelables.
+      </li>
+      <li>
+        El simple hecho de participar en este sorteo implica el conocimiento y
+        aceptación de todas las bases y condiciones contenidas en las presentes
+        “Bases”, como así también la aceptación de las modificaciones que
+        pudiera realizar el Organizador sobre cualquier cuestión no prevista en
+        ellas, supuestos en los cuales los/as participantes no tendrán derecho a
+        reclamo alguno.
+      </li>
+      <li>Estas “Bases” podrán ser consultadas de forma libre y gratuita.</li>
+      <li>
+        Por cualquier cuestión judicial que pudiera derivarse de la realización
+        del sorteo, o entrega del Premio entre el/la participante y el
+        Organizador, se someterán a la jurisdicción de los Tribunales Ordinarios
+        de la Ciudad de Córdoba.
+      </li>
+    </ol>
+  </section>
+
+  <section class="mt-8 text-center">
+    <p class="font-bold">Casa Central:</p>
+    <address class="not-italic">
+      Castro Barros 425, Córdoba, Argentina<br />
+      Tel: 0810 555 0003
+    </address>
+  </section>
+</Layout>
