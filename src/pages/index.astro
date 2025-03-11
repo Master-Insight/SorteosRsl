@@ -3,14 +3,23 @@ import Layout from "@/layouts/Layout.astro";
 import { fetchConfigData } from "@/utils/fetchdata.js";
 import { parseFecha } from "@/utils/parseFecha.js";
 
-// export const prerender = false;
-
-// termino y condiciones
-// https://www.x5argentina.com/rally-spring/
-
 // Obtener datos en el servidor antes de renderizar la página
 const configData = await fetchConfigData();
-console.log("configData: ", configData);
+/**
+ * {
+  Concepto: 'Valor',
+  'Proxima Fecha': '23/03/2025',
+  '1 Premio': 'Auto 0 km',
+  '2 Premio': '',
+  '3 Premio': '',
+  '4 Premio': '',
+  '5 Premio': '',
+  '1 Importe': '5000000',
+  '2 Importe': '',
+  '3 Importe': '',
+  '4 Importe': '',
+  '5
+ */
 
 const PrimerPremio = configData["1 Premio"] || "Auto 0km";
 // const SegundoPremio = configData["2 Premio"] || "Otra cosa";
