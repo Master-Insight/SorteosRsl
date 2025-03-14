@@ -152,7 +152,7 @@ const imgNumSection = "/images/planx5.png";
 
       <!-- Talón lateral para corte -->
       <div
-        class="w-full md:w-1/4 bg-gray-200 flex flex-col justify-between p-4 border-r border-dashed border-gray-400 text-center numero-section"
+        class="w-full md:w-1/4 bg-gray-200 flex flex-col justify-between border-r border-dashed border-gray-400 text-center numero-section"
       >
         <!-- Imagen de fondo en la sección del número -->
         <img
@@ -160,13 +160,25 @@ const imgNumSection = "/images/planx5.png";
           alt="Auto Sorteo"
           class="absolute inset-0 w-full h-full object-cover opacity-5"
         />
-        <h2 class="text-xl font-bold text-gray-400 relative">Número</h2>
-        <p
-          id="numeroCupon"
-          class="text-2xl font-extrabold text-gray-800 relative"
-        >
-        </p>
-        <p class="text-sm text-gray-600 relative">Conserva este cupón</p>
+        <h2 class="text-xl font-bold pt-4 text-gray-400 relative">Número</h2>
+        <div class="text-center">
+          <p
+            id="numeroCuponSuperior"
+            class="text-lg font-semibold text-gray-600 z-40"
+          >
+          </p>
+          <p
+            id="numeroCuponInferior"
+            class="text-5xl font-bold text-black z-40"
+          >
+          </p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600 pb-4 relative">Conserva este cupón</p>
+          <p class="text-xs text-gray-900 relative">
+            Número: <span id="numeroCupon"></span>
+          </p>
+        </div>
       </div>
 
       <!-- Contenido principal del cupón -->
@@ -284,12 +296,19 @@ const imgNumSection = "/images/planx5.png";
     const generarNumeroUnico = () => {
       // const storedNumero = Number(localStorage.getItem("numeroCupon"));
       // if (storedNumero) return storedNumero;
-      const nuevoNumero = Date.now() % 1000000;
+      // const nuevoNumero = Date.now() % 1000000;
       // localStorage.setItem("numeroCupon", String(nuevoNumero));
+      const nuevoNumero = String(Date.now());
       return nuevoNumero;
     };
 
-    document.getElementById("numeroCupon").textContent = generarNumeroUnico();
+    const numeroCompleto = generarNumeroUnico();
+    const primeros9 = numeroCompleto.slice(0, 8);
+    const ultimos4 = numeroCompleto.slice(-5);
+
+    document.getElementById("numeroCuponSuperior").textContent = primeros9;
+    document.getElementById("numeroCuponInferior").textContent = ultimos4;
+    document.getElementById("numeroCupon").textContent = numeroCompleto;
 
     document
       .getElementById("sorteoForm")
