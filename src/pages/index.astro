@@ -23,11 +23,16 @@ const configData = await fetchConfigData();
 
 const PrimerPremio = configData["1 Premio"] || "Auto 0km";
 // const SegundoPremio = configData["2 Premio"] || "Otra cosa";
-const fechaSorteo = parseFecha(configData["Proxima Fecha"]); // 23/03/2025
-const fechaFormateada = new Intl.DateTimeFormat("es-AR", {
-  dateStyle: "full",
-  timeZone: "America/Argentina/Buenos_Aires",
-}).format(fechaSorteo);
+const fechaRaw = configData["Proxima Fecha"] ?? "23/03/2025";
+const parsedFecha = parseFecha(fechaRaw);
+const formattedFecha = parsedFecha
+  ? parsedFecha.toLocaleDateString("es-ES", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
+  : "Fecha no válida";
 
 const logos = [
   { src: "/images/rsl.png", title: "Rally Sprint Latan" },
@@ -227,7 +232,7 @@ const imgNumSection = "/images/planx5.png";
               </li> -->
             </ul>
             <p class="text-sm mb-4">
-              Sorteo el <strong>{fechaFormateada}</strong> en la premiación de la
+              Sorteo el <strong>{formattedFecha}</strong> en la premiación de la
               carrera.
             </p>
             <div class="flex flex-wrap justify-center gap-4">
@@ -277,10 +282,10 @@ const imgNumSection = "/images/planx5.png";
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
     const generarNumeroUnico = () => {
-      const storedNumero = Number(localStorage.getItem("numeroCupon"));
-      if (storedNumero) return storedNumero;
+      // const storedNumero = Number(localStorage.getItem("numeroCupon"));
+      // if (storedNumero) return storedNumero;
       const nuevoNumero = Date.now() % 1000000;
-      localStorage.setItem("numeroCupon", String(nuevoNumero));
+      // localStorage.setItem("numeroCupon", String(nuevoNumero));
       return nuevoNumero;
     };
 
