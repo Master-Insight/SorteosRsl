@@ -308,7 +308,9 @@ const imgNumSection = "/images/planx5.png";
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
-        data.NumeroCupon = document.getElementById("numeroCupon").textContent;
+        data.NumeroCupon = document.getElementById(
+          "numeroCuponInferior",
+        ).textContent;
 
         if (!data.Nombre || !data.Apellido || !data.Telefono) {
           alert("Por favor, complete todos los campos.");
