@@ -1,0 +1,15 @@
+---
+const url = new URL(Astro.request.url);
+const query = Object.fromEntries(url.searchParams.entries());
+console.log("url: ", url);
+console.log("query: ", query);
+---
+
+<html>
+  <head><title>Pago Aprobado</title></head>
+  <body>
+    <h1>¡Pago Aprobado!</h1>
+    <p>Parámetros recibidos:</p>
+    <pre>{JSON.stringify(query, null, 2)}</pre>
+  </body>
+</html>
