@@ -1,15 +1,32 @@
 ---
+import Layout from "@/layouts/Layout.astro";
+
 const url = new URL(Astro.request.url);
 const query = Object.fromEntries(url.searchParams.entries());
 console.log("url: ", url);
 console.log("query: ", query);
+
+/* TEXTO MOSTRADO (QUERY)
+{
+"collection_id": "107758175178",
+"collection_status": "approved",
+"payment_id": "107758175178",
+"status": "approved",
+"external_reference": "null",
+"payment_type": "account_money",
+"merchant_order_id": "30178124591",
+"preference_id": "219522145-d5c07bc0-099c-45f1-bb98-cc1152151e67",
+"site_id": "MLA",
+"processing_mode": "aggregator",
+"merchant_account_id": "null"
+}
+ */
 ---
 
-<html>
-  <head><title>Pago Aprobado</title></head>
-  <body>
+<Layout>
+  <main>
     <h1>¡Pago Aprobado!</h1>
     <p>Parámetros recibidos:</p>
     <pre>{JSON.stringify(query, null, 2)}</pre>
-  </body>
-</html>
+  </main>
+</Layout>
