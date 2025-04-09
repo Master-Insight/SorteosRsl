@@ -17,7 +17,7 @@ export const GET = async () => {
     // Obtener datos de la hoja "Configuracion" en el rango A1:B12
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: GOOGLE_SHEETS_ID,
-      range: 'Configuracion!A1:B12',
+      range: 'Configuracion!A1:B13',
     });
 
     const rows = response.data.values || [];

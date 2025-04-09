@@ -1,8 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { fetchConfigData } from "@/utils/fetchdata";
 const url = new URL(Astro.request.url);
 const data = Object.fromEntries(url.searchParams.entries());
-const linkPago = "https://mpago.li/1pqcnUF";
+
+const configData = await fetchConfigData();
+const linkPago = configData.LinkPago;
 ---
 
 <Layout>
