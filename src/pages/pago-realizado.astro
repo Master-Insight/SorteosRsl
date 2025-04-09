@@ -1,10 +1,15 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { fetchConfigData } from "@/utils/fetchdata.js";
+import { parseFecha } from "@/utils/parseFecha.js";
 
 const url = new URL(Astro.request.url);
 const query = Object.fromEntries(url.searchParams.entries());
-console.log("url: ", url);
-console.log("query: ", query);
+
+// Redirección si el pago NO fue aprobado
+if (query.status !== "approved") {
+  return Astro.redirect("/pago-rechazado");
+}
 
 /* TEXTO MOSTRADO (QUERY)
 {
