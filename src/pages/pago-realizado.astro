@@ -4,34 +4,73 @@ import { fetchConfigData } from "@/utils/fetchdata.js";
 import { parseFecha } from "@/utils/parseFecha.js";
 
 const url = new URL(Astro.request.url);
-const query = Object.fromEntries(url.searchParams.entries());
+// const query = Object.fromEntries(url.searchParams.entries());
+
+//mock datos TEXTO MOSTRADO si se hiciera bien (QUERY)
+const query = {
+  collection_id: "107758175178",
+  collection_status: "approved",
+  payment_id: "107758175178",
+  status: "approved",
+  external_reference: "null",
+  payment_type: "account_money",
+  merchant_order_id: "30178124591",
+  preference_id: "219522145-d5c07bc0-099c-45f1-bb98-cc1152151e67",
+  site_id: "MLA",
+  processing_mode: "aggregator",
+  merchant_account_id: "null",
+};
 
 // Redirección si el pago NO fue aprobado
 if (query.status !== "approved") {
   return Astro.redirect("/pago-rechazado");
 }
 
-/* TEXTO MOSTRADO (QUERY)
-{
-"collection_id": "107758175178",
-"collection_status": "approved",
-"payment_id": "107758175178",
-"status": "approved",
-"external_reference": "null",
-"payment_type": "account_money",
-"merchant_order_id": "30178124591",
-"preference_id": "219522145-d5c07bc0-099c-45f1-bb98-cc1152151e67",
-"site_id": "MLA",
-"processing_mode": "aggregator",
-"merchant_account_id": "null"
-}
- */
+// Datos de configuración del sorteo
+const configData = await fetchConfigData();
+const PrimerPremio = configData["1 Premio"] || "Auto 0km";
+const fechaRaw = configData["Proxima Fecha"] ?? "23/03/2025";
+const parsedFecha = parseFecha(fechaRaw);
+const formattedFecha = parsedFecha
+  ? parsedFecha.toLocaleDateString("es-ES", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
+  : "Fecha no válida";
+
+const logos = [
+  { src: "/images/rsl.png", title: "Rally Sprint Latan" },
+  { src: "/images/actc.png", title: "Asociación Corredores Turismo Carretera" },
+  { src: "/images/planx5.png", title: "Plan X5 Argentina" },
+];
+
+const urlImagen = "/images/RS-POSTER-CARRERA-DIBUJOS-REMERA-1.webp";
+const imagenPrimerPremio = "/images/SORTEO.webp";
+const imgNumSection = "/images/planx5.png";
+
+// Comprobante de pago
+const comprobante = {
+  ID: query.collection_id,
+  Estado: query.status,
+  Tipo: query.payment_type,
+  Orden: query.merchant_order_id,
+};
 ---
 
 <Layout>
-  <main>
-    <h1>¡Pago Aprobado!</h1>
-    <p>Parámetros recibidos:</p>
-    <pre>{JSON.stringify(query, null, 2)}</pre>
+  <main
+    class="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-100"
+  >
+    <div class="max-w-3xl w-full bg-white shadow-lg rounded-lg p-6 relative">
+      <h1 class="text-3xl font-bold text-center text-green-700 mb-4">
+        ✅ ¡Pago Aprobado!
+      </h1>
+
+      <p class="text-center text-gray-600 mb-6">
+        Ya estás participando en el sorteo 🎉
+      </p>
+    </div>
   </main>
 </Layout>
