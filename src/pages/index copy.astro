@@ -162,12 +162,14 @@ const imgNumSection = "/images/planx5.png";
         />
         <h2 class="text-xl font-bold pt-4 text-gray-400 relative">Número</h2>
         <div class="text-center">
-          <p id="numeroCupon" class="text-5xl font-bold text-black z-40">
-            XXXXX
+          <p
+            id="numeroCuponInferior"
+            class="text-5xl font-bold text-black z-40"
+          >
           </p>
         </div>
         <div>
-          <p class="text-sm text-gray-600 pb-4 relative">Cupón a abonar</p>
+          <p class="text-sm text-gray-600 pb-4 relative">Conserva este cupón</p>
         </div>
       </div>
 
@@ -179,7 +181,7 @@ const imgNumSection = "/images/planx5.png";
         <div class="flex flex-col md:flex-row gap-4">
           <!-- Formulario -->
           <div class="w-full md:w-1/2">
-            <form id="introForm" class="space-y-2">
+            <form id="sorteoForm" class="space-y-2">
               <input
                 type="text"
                 id="Nombre"
@@ -283,19 +285,32 @@ const imgNumSection = "/images/planx5.png";
 
 <script is:inline>
   document.addEventListener("DOMContentLoaded", () => {
+    const generarNumeroUnico = () => {
+      const nuevoNumero = String(Date.now());
+      return nuevoNumero;
+    };
+
+    const numeroCompleto = generarNumeroUnico();
+    const ultimos4 = numeroCompleto.slice(-5);
+
+    document.getElementById("numeroCuponInferior").textContent = ultimos4;
+
     document
-      .getElementById("introForm")
+      .getElementById("sorteoForm")
       .addEventListener("submit", async (event) => {
         event.preventDefault();
         const form = event.target;
         const submitButton = form.querySelector("button[type='submit']");
 
         // Cambiar el texto del botón y deshabilitarlo
-        submitButton.textContent = "Procesando...";
+        submitButton.textContent = "Enviando...";
         submitButton.disabled = true;
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
+        data.NumeroCupon = document.getElementById(
+          "numeroCuponInferior",
+        ).textContent;
 
         if (!data.Nombre || !data.Apellido || !data.Telefono) {
           alert("Por favor, complete todos los campos.");
@@ -304,11 +319,25 @@ const imgNumSection = "/images/planx5.png";
           return;
         }
 
-        // Guardar provisionalmente en localStorage
-        localStorage.setItem("sorteoData", JSON.stringify(data));
-        // Redirigir a instructivo con params
-        const params = new URLSearchParams(data).toString();
-        window.location.href = `/como-abonar?${params}`;
+        try {
+          const response = await fetch("/api/save.json", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (response.ok) {
+            window.location.href = `/enviado?${new URLSearchParams(data).toString()}`;
+          } else {
+            alert("Error al guardar los datos");
+            submitButton.textContent = "Participar"; // Restaurar texto
+            submitButton.disabled = false; // Habilitar botón
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Error al enviar el formulario");
+          submitButton.textContent = "Participar"; // Restaurar texto
+          submitButton.disabled = false; // Habilitar botón
+        }
       });
 
     // Abrir Modal Premio
