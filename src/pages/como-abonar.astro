@@ -1,11 +1,36 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+const url = new URL(Astro.request.url);
+const data = Object.fromEntries(url.searchParams.entries());
 ---
 
 <Layout>
-  <script
-    src="https://www.mercadopago.com.ar/integrations/v1/web-payment-checkout.js"
-    data-preference-id="219522145-d5c07bc0-099c-45f1-bb98-cc1152151e67"
-    data-source="button"
-  ></script>
+  <main class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-6 text-black">
+      <h1 class="text-2xl font-bold mb-4 text-center">
+        Cómo abonar - {data.Nombre}
+      </h1>
+      <ol class="list-decimal list-inside mb-6 space-y-2">
+        <li>Haz clic en el botón de MercadoPago para completar el pago.</li>
+        <li>
+          Una vez aprobado, NO serás redirigido automáticamente. Aqui debes
+          tener cuidado y seleccionar el boton que te señalo aqui
+        </li>
+      </ol>
+      <!-- Botón MercadoPago -->
+      <a
+        href="https://mpago.li/1pqcnUF"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-3 bg-[#009ee3] hover:bg-[#007cc3] text-white font-semibold py-3 px-5 rounded-lg shadow-lg transition duration-200"
+      >
+        <img
+          src="/images/mercado-pago-logo.svg"
+          alt="Logo Mercado Pago"
+          class="h-6 w-auto"
+        />
+        <span>Pagar con Mercado Pago</span>
+      </a>
+    </div>
+  </main>
 </Layout>
