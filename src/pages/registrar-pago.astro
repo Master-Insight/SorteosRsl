@@ -3,29 +3,6 @@ import Layout from "@/layouts/Layout.astro";
 import { fetchConfigData } from "@/utils/fetchdata.js";
 import { parseFecha } from "@/utils/parseFecha.js";
 
-const url = new URL(Astro.request.url);
-const query = Object.fromEntries(url.searchParams.entries());
-
-//mock datos TEXTO MOSTRADO si se hiciera bien (QUERY)
-// const query = {
-//   collection_id: "107758175178",
-//   collection_status: "approved",
-//   payment_id: "107758175178",
-//   status: "approved",
-//   external_reference: "null",
-//   payment_type: "account_money",
-//   merchant_order_id: "30178124591",
-//   preference_id: "219522145-d5c07bc0-099c-45f1-bb98-cc1152151e67",
-//   site_id: "MLA",
-//   processing_mode: "aggregator",
-//   merchant_account_id: "null",
-// };
-
-// Redirección si el pago NO fue aprobado
-if (query.status !== "approved") {
-  return Astro.redirect("/pago-rechazado");
-}
-
 // Datos de configuración del sorteo
 const configData = await fetchConfigData();
 const PrimerPremio = configData["1 Premio"] || "Auto 0km";
@@ -39,7 +16,6 @@ const formattedFecha = parsedFecha
       year: "numeric",
     })
   : "Fecha no válida";
-const cuponNumber = query.merchant_order_id.slice(-5);
 
 const logos = [
   { src: "/images/rsl.png", title: "Rally Sprint Latan" },
@@ -50,14 +26,6 @@ const logos = [
 const urlImagen = "/images/RS-POSTER-CARRERA-DIBUJOS-REMERA-1.webp";
 const imagenPrimerPremio = "/images/SORTEO.webp";
 const imgNumSection = "/images/planx5.png";
-
-// Comprobante de pago
-const comprobante = {
-  ID: query.collection_id,
-  Estado: query.status,
-  Tipo: query.payment_type,
-  Orden: query.merchant_order_id,
-};
 ---
 
 <Layout>
@@ -156,8 +124,8 @@ const comprobante = {
     <img src={urlImagen} alt="Autos de Rally" class="background-image rally" />
 
     <div class="max-w-3xl w-full bg-white shadow-xl rounded-xl p-6 relative">
-      <h1 class="text-3xl font-extrabold text-center text-green-700 mb-6">
-        ✅ ¡Pago Aprobado! - Verifica tus datos
+      <h1 class="text-3xl font-extrabold text-center text-red-600 mb-6">
+        ❗ Carga tu comprobante Manualmente
       </h1>
 
       <!-- Formulario y contenido -->
@@ -175,7 +143,7 @@ const comprobante = {
 
         <!-- Talón lateral -->
         <aside
-          class="w-full hidden md:w-1/4 bg-gray-100 md:flex flex-col justify-between border-r border-dashed border-gray-300 text-center numero-section"
+          class="w-full hidden md:w-1/8 bg-gray-100 md:flex flex-col justify-center border-r border-dashed border-gray-300 text-center numero-section"
         >
           <img
             src={imgNumSection}
@@ -183,33 +151,24 @@ const comprobante = {
             class="absolute inset-0 w-full h-full object-cover opacity-5"
             aria-hidden="true"
           />
-          <h2 class="text-xl font-semibold pt-4 text-gray-500 relative">
-            Número
+          <h2
+            class="text-xl font-semibold text-gray-500 relative rotate-270 whitespace-nowrap"
+          >
+            Registrar Pago
           </h2>
-          <div class="text-center z-10">
-            <p id="numeroCuponInferior" class="text-5xl font-bold text-black">
-              {cuponNumber}
-            </p>
-          </div>
-          <div></div>
         </aside>
 
         <!-- Contenido principal -->
-        <div
-          class="w-full md:w-3/4 p-6 flex flex-col justify-between relative space-y-4"
-        >
-          <h2
-            id="formulario-bono"
-            class="text-2xl font-bold text-center text-gray-800"
-          >
-            Bono Contribución
+        <div class="w-full md:w-3/4 p-6 space-y-4">
+          <h2 class="text-2xl font-bold text-center text-gray-800">
+            Formulario de Participación
           </h2>
 
           <div class="flex flex-col md:flex-row gap-6">
             <!-- Formulario -->
             <form
               id="sorteoForm"
-              class="w-full md:w-1/2 space-y-4"
+              class="w-full space-y-4"
               role="form"
               aria-label="Formulario de datos personales"
             >
@@ -266,88 +225,44 @@ const comprobante = {
               <div>
                 <label
                   for="Comprobante"
-                  class="block text-sm font-medium text-gray-500"
-                  >Comprobante</label
+                  class="block text-sm font-medium text-gray-700"
+                  >Comprobante de pago</label
                 >
                 <input
                   type="text"
                   id="Comprobante"
                   name="Comprobante"
-                  value={comprobante.ID}
-                  readonly
-                  aria-readonly="true"
-                  class="w-full p-2 border border-gray-300 rounded-md text-gray-400 italic bg-gray-100"
+                  required
+                  placeholder="ID de la transferencia o ticket"
+                  class="w-full p-2 border border-gray-300 rounded-md text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="FechaPago"
+                  class="block text-sm font-medium text-gray-700"
+                  >Fecha de pago</label
+                >
+                <input
+                  type="date"
+                  id="FechaPago"
+                  name="FechaPago"
+                  required
+                  class="w-full p-2 border border-gray-300 rounded-md text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
               <button
                 type="submit"
-                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 aria-label="Enviar datos del formulario"
               >
-                Registrarme
+                Enviar participación
               </button>
             </form>
-
-            <!-- Información de premios -->
-            <section
-              class="w-full md:w-1/2 text-gray-800 space-y-4"
-              aria-labelledby="info-premios"
-            >
-              <h3 id="info-premios" class="text-xl font-semibold">Premio:</h3>
-              <ul class="mb-2">
-                <li
-                  class="p-4 bg-gray-100 text-2xl text-center rounded-lg shadow"
-                >
-                  <span
-                    id="primerPremio"
-                    class="font-extrabold text-red-700 hover:text-blue-900 transition-colors"
-                    aria-live="polite"
-                  >
-                    {PrimerPremio}
-                  </span>
-                </li>
-              </ul>
-              <p class="text-sm">
-                Sorteo el <strong>{formattedFecha}</strong> en la premiación de la
-                carrera.
-              </p>
-              <div class="flex flex-wrap justify-center gap-3 mt-3">
-                {
-                  logos.map((logo) => (
-                    <img
-                      src={logo.src}
-                      alt={`Logo de ${logo.title}`}
-                      title={logo.title}
-                      class="w-16 h-auto"
-                    />
-                  ))
-                }
-              </div>
-            </section>
           </div>
         </div>
-      </section>
-
-      <!-- Comprobante -->
-      <section
-        class="flex flex-col items-center my-8"
-        aria-labelledby="comprobante-title"
-      >
-        <h2
-          id="comprobante-title"
-          class="text-lg font-semibold text-gray-800 mb-3"
-        >
-          📄 Comprobante de pago
-        </h2>
-        <ul
-          class="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border w-full max-w-md"
-        >
-          <li><strong>ID de pago:</strong> {comprobante.ID}</li>
-          <li><strong>Estado:</strong> {comprobante.Estado}</li>
-          <li><strong>Tipo de pago:</strong> {comprobante.Tipo}</li>
-          <li><strong>Orden:</strong> {comprobante.Orden}</li>
-        </ul>
       </section>
 
       <!-- Bases -->
@@ -381,74 +296,46 @@ const comprobante = {
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("sorteoForm");
     const submitButton = form.querySelector("button[type='submit']");
-    const comprobanteInput = document.getElementById("Comprobante");
 
-    // Recuperar datos del localStorage
-    let savedData = JSON.parse(localStorage.getItem("sorteoData") || "{}");
-
-    // Si el comprobante no está guardado, tomarlo del input
-    if (!savedData.Comprobante) {
-      savedData.Comprobante = comprobanteInput?.value || "";
-      localStorage.setItem("sorteoData", JSON.stringify(savedData));
-    }
-
-    // Cargar valores en los campos (si no tienen datos)
-    ["Nombre", "Apellido", "Telefono", "Comprobante"].forEach((field) => {
-      const input = document.getElementById(field);
-      if (input && !input.value && savedData[field]) {
-        input.value = savedData[field];
-      }
-    });
-
-    // Guardar en localStorage cuando se edite un campo
-    form.addEventListener("input", (e) => {
-      const { name, value } = e.target;
-      if (name) {
-        savedData[name] = value;
-        localStorage.setItem("sorteoData", JSON.stringify(savedData));
-      }
-    });
-    // Envío del formulario
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-
-      submitButton.textContent = "Enviando...";
       submitButton.disabled = true;
+      submitButton.textContent = "Enviando...";
 
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
 
-      // Validación simple
-      const camposObligatorios = ["Nombre", "Apellido", "Telefono"];
-      const incompletos = camposObligatorios.filter((campo) => !data[campo]);
-
-      if (incompletos.length > 0) {
-        alert("Por favor, complete todos los campos.");
-        submitButton.textContent = "Registrarme";
+      const campos = [
+        "Nombre",
+        "Apellido",
+        "Telefono",
+        "Comprobante",
+        "FechaPago",
+      ];
+      const vacíos = campos.filter((c) => !data[c]);
+      if (vacíos.length > 0) {
+        alert("Por favor completa todos los campos.");
         submitButton.disabled = false;
+        submitButton.textContent = "Enviar participación";
         return;
       }
 
       try {
-        const response = await fetch("/api/save.json", {
+        const res = await fetch("/api/send.json", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
 
-        if (!response.ok) {
-          throw new Error("Error al guardar los datos");
-        }
+        if (!res.ok) throw new Error("Error al guardar");
 
-        localStorage.removeItem("sorteoData");
         window.location.href = `/gracias-por-participar?${new URLSearchParams(data).toString()}`;
-        // alert("¡Formulario enviado correctamente!");
       } catch (err) {
-        console.error("Error al enviar:", err);
-        alert("Hubo un problema al enviar el formulario.");
+        console.error(err);
+        alert("Hubo un error al enviar el formulario.");
       } finally {
-        submitButton.textContent = "Registrarme";
         submitButton.disabled = false;
+        submitButton.textContent = "Enviar participación";
       }
     });
   });
