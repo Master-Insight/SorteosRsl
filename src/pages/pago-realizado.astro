@@ -4,22 +4,22 @@ import { fetchConfigData } from "@/utils/fetchdata.js";
 import { parseFecha } from "@/utils/parseFecha.js";
 
 const url = new URL(Astro.request.url);
-// const query = Object.fromEntries(url.searchParams.entries());
+const query = Object.fromEntries(url.searchParams.entries());
 
 //mock datos TEXTO MOSTRADO si se hiciera bien (QUERY)
-const query = {
-  collection_id: "107758175178",
-  collection_status: "approved",
-  payment_id: "107758175178",
-  status: "approved",
-  external_reference: "null",
-  payment_type: "account_money",
-  merchant_order_id: "30178124591",
-  preference_id: "219522145-d5c07bc0-099c-45f1-bb98-cc1152151e67",
-  site_id: "MLA",
-  processing_mode: "aggregator",
-  merchant_account_id: "null",
-};
+// const query = {
+//   collection_id: "107758175178",
+//   collection_status: "approved",
+//   payment_id: "107758175178",
+//   status: "approved",
+//   external_reference: "null",
+//   payment_type: "account_money",
+//   merchant_order_id: "30178124591",
+//   preference_id: "219522145-d5c07bc0-099c-45f1-bb98-cc1152151e67",
+//   site_id: "MLA",
+//   processing_mode: "aggregator",
+//   merchant_account_id: "null",
+// };
 
 // Redirección si el pago NO fue aprobado
 if (query.status !== "approved") {
