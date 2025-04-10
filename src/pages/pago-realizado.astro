@@ -1,0 +1,455 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { fetchConfigData } from "@/utils/fetchdata.js";
+import { parseFecha } from "@/utils/parseFecha.js";
+
+const url = new URL(Astro.request.url);
+const query = Object.fromEntries(url.searchParams.entries());
+
+//mock datos TEXTO MOSTRADO si se hiciera bien (QUERY)
+// const query = {
+//   collection_id: "107758175178",
+//   collection_status: "approved",
+//   payment_id: "107758175178",
+//   status: "approved",
+//   external_reference: "null",
+//   payment_type: "account_money",
+//   merchant_order_id: "30178124591",
+//   preference_id: "219522145-d5c07bc0-099c-45f1-bb98-cc1152151e67",
+//   site_id: "MLA",
+//   processing_mode: "aggregator",
+//   merchant_account_id: "null",
+// };
+
+// Redirección si el pago NO fue aprobado
+if (query.status !== "approved") {
+  return Astro.redirect("/pago-rechazado");
+}
+
+// Datos de configuración del sorteo
+const configData = await fetchConfigData();
+const PrimerPremio = configData["1 Premio"] || "Auto 0km";
+const fechaRaw = configData["Proxima Fecha"] ?? "23/03/2025";
+const parsedFecha = parseFecha(fechaRaw);
+const formattedFecha = parsedFecha
+  ? parsedFecha.toLocaleDateString("es-ES", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
+  : "Fecha no válida";
+const cuponNumber = query.merchant_order_id.slice(-5);
+
+const logos = [
+  { src: "/images/rsl.png", title: "Rally Sprint Latan" },
+  { src: "/images/actc.png", title: "Asociación Corredores Turismo Carretera" },
+  { src: "/images/planx5.png", title: "Plan X5 Argentina" },
+];
+
+const urlImagen = "/images/RS-POSTER-CARRERA-DIBUJOS-REMERA-1.webp";
+const imagenPrimerPremio = "/images/SORTEO.webp";
+const imgNumSection = "/images/planx5.png";
+
+// Comprobante de pago
+const comprobante = {
+  ID: query.collection_id,
+  Estado: query.status,
+  Tipo: query.payment_type,
+  Orden: query.merchant_order_id,
+};
+---
+
+<Layout>
+  <style>
+    /* Estilos para las imágenes de fondo */
+    .background-image {
+      position: absolute;
+      z-index: 1;
+      opacity: 0.1;
+      object-fit: contain;
+    }
+    .background-image.rally {
+      top: 10%;
+      left: 5%;
+      width: 100%;
+    }
+    .background-image.auto {
+      bottom: 10%;
+      right: 5%;
+      width: 30%;
+    }
+    .content {
+      position: relative;
+      z-index: 30;
+    }
+    /* Estilo específico para la sección del número */
+    .numero-section {
+      position: relative;
+      overflow: hidden;
+    }
+    .numero-section img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.05;
+      z-index: 1;
+    }
+    /* Estilos para el modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.open {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 79%; /* Ancho del 79% en pantallas grandes */
+      max-width: 600px; /* Máximo ancho en pantallas grandes */
+      text-align: center;
+      overflow: auto; /* Para contenido que exceda el tamaño */
+    }
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+    }
+    .modal-content p {
+      margin-top: 1rem; /* Espacio entre la imagen y el texto */
+    }
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 80%; /* Ancho del 80% en pantallas pequeñas */
+        height: auto; /* Altura automática */
+        border-radius: 10px; /* Bordes redondeados */
+        max-width: none; /* Eliminar el máximo ancho en móviles */
+      }
+    }
+    .basesycondiciones {
+      z-index: 50;
+    }
+  </style>
+
+  <main
+    class="min-h-screen md:min-h-9/12 bg-gray-100 flex flex-col items-center justify-center p-4 relative w-full overflow-hidden"
+  >
+    <!-- Imagen de fondo general -->
+    <img src={urlImagen} alt="Autos de Rally" class="background-image rally" />
+
+    <div class="max-w-3xl w-full bg-white shadow-xl rounded-xl p-6 relative">
+      <h1 class="text-3xl font-extrabold text-center text-green-700 mb-6">
+        ✅ ¡Pago Aprobado! - Verifica tus datos
+      </h1>
+
+      <!-- Formulario y contenido -->
+      <section
+        class="w-full bg-white rounded-xl shadow-md flex flex-col md:flex-row border-4 border-dashed border-gray-300 relative content overflow-hidden"
+        aria-labelledby="formulario-bono"
+      >
+        <!-- Imagen de fondo visible solo en mobile -->
+        <div
+          class="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-[0.05] md:hidden"
+          style={`background-image: url(${urlImagen})`}
+          aria-hidden="true"
+        >
+        </div>
+
+        <!-- Talón lateral -->
+        <aside
+          class="w-full hidden md:w-1/4 bg-gray-100 md:flex flex-col justify-between border-r border-dashed border-gray-300 text-center numero-section"
+        >
+          <img
+            src={imgNumSection}
+            alt=""
+            class="absolute inset-0 w-full h-full object-cover opacity-5"
+            aria-hidden="true"
+          />
+          <h2 class="text-xl font-semibold pt-4 text-gray-500 relative">
+            Número
+          </h2>
+          <div class="text-center z-10">
+            <p id="numeroCuponInferior" class="text-5xl font-bold text-black">
+              {cuponNumber}
+            </p>
+          </div>
+          <div></div>
+        </aside>
+
+        <!-- Contenido principal -->
+        <div
+          class="w-full md:w-3/4 p-6 flex flex-col justify-between relative space-y-4"
+        >
+          <h2
+            id="formulario-bono"
+            class="text-2xl font-bold text-center text-gray-800"
+          >
+            Bono Contribución
+          </h2>
+
+          <div class="flex flex-col md:flex-row gap-6">
+            <!-- Formulario -->
+            <form
+              id="sorteoForm"
+              class="w-full md:w-1/2 space-y-4"
+              role="form"
+              aria-label="Formulario de datos personales"
+            >
+              <div>
+                <label
+                  for="Nombre"
+                  class="block text-sm font-medium text-gray-700">Nombre</label
+                >
+                <input
+                  type="text"
+                  id="Nombre"
+                  name="Nombre"
+                  required
+                  placeholder="Tu nombre"
+                  aria-required="true"
+                  class="w-full p-2 border border-gray-300 rounded-md text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="Apellido"
+                  class="block text-sm font-medium text-gray-700"
+                  >Apellido</label
+                >
+                <input
+                  type="text"
+                  id="Apellido"
+                  name="Apellido"
+                  required
+                  placeholder="Tu apellido"
+                  aria-required="true"
+                  class="w-full p-2 border border-gray-300 rounded-md text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="Telefono"
+                  class="block text-sm font-medium text-gray-700"
+                  >Teléfono</label
+                >
+                <input
+                  type="tel"
+                  id="Telefono"
+                  name="Telefono"
+                  required
+                  placeholder="Ej: 1123456789"
+                  aria-required="true"
+                  class="w-full p-2 border border-gray-300 rounded-md text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="Comprobante"
+                  class="block text-sm font-medium text-gray-500"
+                  >Comprobante</label
+                >
+                <input
+                  type="text"
+                  id="Comprobante"
+                  name="Comprobante"
+                  value={comprobante.ID}
+                  readonly
+                  aria-readonly="true"
+                  class="w-full p-2 border border-gray-300 rounded-md text-gray-400 italic bg-gray-100"
+                />
+              </div>
+
+              <button
+                type="submit"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                aria-label="Enviar datos del formulario"
+              >
+                Registrarme
+              </button>
+            </form>
+
+            <!-- Información de premios -->
+            <section
+              class="w-full md:w-1/2 text-gray-800 space-y-4"
+              aria-labelledby="info-premios"
+            >
+              <h3 id="info-premios" class="text-xl font-semibold">Premio:</h3>
+              <ul class="mb-2">
+                <li
+                  class="p-4 bg-gray-100 text-2xl text-center rounded-lg shadow"
+                >
+                  <span
+                    id="primerPremio"
+                    class="font-extrabold text-red-700 hover:text-blue-900 transition-colors"
+                    aria-live="polite"
+                  >
+                    {PrimerPremio}
+                  </span>
+                </li>
+              </ul>
+              <p class="text-sm">
+                Sorteo el <strong>{formattedFecha}</strong> en la premiación de la
+                carrera.
+              </p>
+              <div class="flex flex-wrap justify-center gap-3 mt-3">
+                {
+                  logos.map((logo) => (
+                    <img
+                      src={logo.src}
+                      alt={`Logo de ${logo.title}`}
+                      title={logo.title}
+                      class="w-16 h-auto"
+                    />
+                  ))
+                }
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comprobante -->
+      <section
+        class="flex flex-col items-center my-8"
+        aria-labelledby="comprobante-title"
+      >
+        <h2
+          id="comprobante-title"
+          class="text-lg font-semibold text-gray-800 mb-3"
+        >
+          📄 Comprobante de pago
+        </h2>
+        <ul
+          class="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border w-full max-w-md"
+        >
+          <li><strong>ID de pago:</strong> {comprobante.ID}</li>
+          <li><strong>Estado:</strong> {comprobante.Estado}</li>
+          <li><strong>Tipo de pago:</strong> {comprobante.Tipo}</li>
+          <li><strong>Orden:</strong> {comprobante.Orden}</li>
+        </ul>
+      </section>
+
+      <!-- Bases -->
+      <div class="text-center mt-4">
+        <a
+          href="/bases-y-condiciones"
+          class="text-sm text-gray-600 hover:text-blue-600 underline focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Ver bases y condiciones
+        </a>
+      </div>
+
+      <!-- Logos finales -->
+      <div class="flex justify-center gap-6 mt-6">
+        {
+          logos.map((logo) => (
+            <img
+              src={logo.src}
+              alt={`Logo de ${logo.title}`}
+              title={logo.title}
+              class="h-12 w-auto"
+            />
+          ))
+        }
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("sorteoForm");
+    const submitButton = form.querySelector("button[type='submit']");
+    const comprobanteInput = document.getElementById("Comprobante");
+
+    // Recuperar datos del localStorage
+    let savedData = JSON.parse(localStorage.getItem("sorteoData") || "{}");
+
+    // Si el comprobante no está guardado, tomarlo del input
+    if (!savedData.Comprobante) {
+      savedData.Comprobante = comprobanteInput?.value || "";
+      localStorage.setItem("sorteoData", JSON.stringify(savedData));
+    }
+
+    // Cargar valores en los campos (si no tienen datos)
+    ["Nombre", "Apellido", "Telefono", "Comprobante"].forEach((field) => {
+      const input = document.getElementById(field);
+      if (input && !input.value && savedData[field]) {
+        input.value = savedData[field];
+      }
+    });
+
+    // Guardar en localStorage cuando se edite un campo
+    form.addEventListener("input", (e) => {
+      const { name, value } = e.target;
+      if (name) {
+        savedData[name] = value;
+        localStorage.setItem("sorteoData", JSON.stringify(savedData));
+      }
+    });
+    // Envío del formulario
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      submitButton.textContent = "Enviando...";
+      submitButton.disabled = true;
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Validación simple
+      const camposObligatorios = ["Nombre", "Apellido", "Telefono"];
+      const incompletos = camposObligatorios.filter((campo) => !data[campo]);
+
+      if (incompletos.length > 0) {
+        alert("Por favor, complete todos los campos.");
+        submitButton.textContent = "Registrarme";
+        submitButton.disabled = false;
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/save.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al guardar los datos");
+        }
+
+        localStorage.removeItem("sorteoData");
+        window.location.href = `/gracias-por-participar?${new URLSearchParams(data).toString()}`;
+        // alert("¡Formulario enviado correctamente!");
+      } catch (err) {
+        console.error("Error al enviar:", err);
+        alert("Hubo un problema al enviar el formulario.");
+      } finally {
+        submitButton.textContent = "Registrarme";
+        submitButton.disabled = false;
+      }
+    });
+  });
+</script>

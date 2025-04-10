@@ -1,0 +1,62 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { fetchConfigData } from "@/utils/fetchdata";
+
+const url = new URL(Astro.request.url);
+const data = Object.fromEntries(url.searchParams.entries());
+
+const configData = await fetchConfigData();
+const linkPago = configData.LinkPago;
+---
+
+<Layout>
+  <main class="min-h-screen flex items-center justify-center p-4 bg-red-50">
+    <div
+      class="max-w-lg w-full bg-white rounded-xl shadow-xl p-6 text-gray-800"
+    >
+      <h1 class="text-3xl font-bold text-center text-red-700 mb-4">
+        ❌ ¡Pago Rechazado!
+      </h1>
+
+      {
+        data?.Nombre && (
+          <p class="text-center text-lg mb-6">
+            Hola <strong>{data.Nombre}</strong>, algo salió mal con tu intento
+            de pago.
+          </p>
+        )
+      }
+
+      <p class="text-base leading-relaxed mb-4 text-center">
+        Puede haber sido un error con la tarjeta, conexión o información
+        incompleta.
+      </p>
+
+      <p class="text-base leading-relaxed mb-6 text-center">
+        No te preocupes, podés intentarlo de nuevo haciendo clic en el siguiente
+        botón:
+      </p>
+
+      <div class="text-center mb-6">
+        <a
+          href={linkPago}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-3 bg-[#009ee3] hover:bg-[#007cc3] text-white font-semibold py-3 px-5 rounded-lg shadow-lg transition duration-200"
+        >
+          <span>Reintentar pago en Mercado Pago</span>
+          <img
+            src="/images/mercado-pago-logo.svg"
+            alt="Logo Mercado Pago"
+            class="h-6 w-auto"
+          />
+        </a>
+      </div>
+
+      <p class="text-sm text-center text-gray-600">
+        Si el problema persiste, busca uno de nuestros asesores o volvé a
+        intentar más tarde.
+      </p>
+    </div>
+  </main>
+</Layout>

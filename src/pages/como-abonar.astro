@@ -1,0 +1,67 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { fetchConfigData } from "@/utils/fetchdata";
+const url = new URL(Astro.request.url);
+const data = Object.fromEntries(url.searchParams.entries());
+
+const configData = await fetchConfigData();
+const linkPago = configData.LinkPago;
+---
+
+<Layout>
+  <main class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-6 text-black">
+      <h1 class="text-2xl font-bold mb-4 text-center">
+        Instrucciones para abonar - {data.Nombre}
+      </h1>
+      <ol
+        class="list-decimal list-inside mb-6 space-y-3 text-base leading-relaxed"
+      >
+        <li>
+          Hacé clic en el botón de <strong>Mercado Pago</strong> para completar el
+          pago.
+        </li>
+        <li>
+          Vas a poder pagar con tarjeta, saldo en cuenta, o en efectivo según
+          prefieras.
+        </li>
+        <li>
+          <span class="text-red-600 font-bold">¡OJO!</span> Una vez hecho el pago,
+          <strong>NO se redirige automáticamente</strong> a la siguiente página.
+        </li>
+        <li>
+          Tenés que tocar el botón que dice <strong>"Volver al sitio"</strong>,
+          que aparece abajo a la izquierda en Mercado Pago.
+          <div class="mt-2">
+            <img
+              src="/images/MercadoPago-boton-volver.jpg"
+              alt="Botón 'Volver al sitio' de Mercado Pago"
+              class="rounded border border-gray-300 shadow"
+            />
+          </div>
+        </li>
+        <li>
+          Después de volver, vas a poder <strong
+            >cargar tus datos para confirmar tu participación</strong
+          > en el sorteo.
+        </li>
+      </ol>
+
+      <div class="text-center mt-6">
+        <a
+          href={linkPago}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-3 bg-[#009ee3] hover:bg-[#007cc3] text-white font-semibold py-3 px-5 rounded-lg shadow-lg transition duration-200"
+        >
+          <span>Ir a Mercado Pago</span>
+          <img
+            src="/images/mercado-pago-logo.svg"
+            alt="Logo Mercado Pago"
+            class="h-6 w-auto"
+          />
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>
