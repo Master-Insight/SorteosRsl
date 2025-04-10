@@ -441,7 +441,7 @@ const comprobante = {
         }
 
         localStorage.removeItem("sorteoData");
-        window.location.href = `/enviado?${new URLSearchParams(data).toString()}`;
+        window.location.href = `/gracias-por-participar?${new URLSearchParams(data).toString()}`;
         // alert("¡Formulario enviado correctamente!");
       } catch (err) {
         console.error("Error al enviar:", err);
