@@ -39,6 +39,7 @@ const formattedFecha = parsedFecha
       year: "numeric",
     })
   : "Fecha no válida";
+const cuponNumber = query.merchant_order_id.slice(-5);
 
 const logos = [
   { src: "/images/rsl.png", title: "Rally Sprint Latan" },
@@ -60,17 +61,345 @@ const comprobante = {
 ---
 
 <Layout>
+  <style>
+    /* Estilos para las imágenes de fondo */
+    .background-image {
+      position: absolute;
+      z-index: 1;
+      opacity: 0.1;
+      object-fit: contain;
+    }
+    .background-image.rally {
+      top: 10%;
+      left: 5%;
+      width: 100%;
+    }
+    .background-image.auto {
+      bottom: 10%;
+      right: 5%;
+      width: 30%;
+    }
+    .content {
+      position: relative;
+      z-index: 30;
+    }
+    /* Estilo específico para la sección del número */
+    .numero-section {
+      position: relative;
+      overflow: hidden;
+    }
+    .numero-section img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.05;
+      z-index: 1;
+    }
+    /* Estilos para el modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.open {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 79%; /* Ancho del 79% en pantallas grandes */
+      max-width: 600px; /* Máximo ancho en pantallas grandes */
+      text-align: center;
+      overflow: auto; /* Para contenido que exceda el tamaño */
+    }
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+    }
+    .modal-content p {
+      margin-top: 1rem; /* Espacio entre la imagen y el texto */
+    }
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 80%; /* Ancho del 80% en pantallas pequeñas */
+        height: auto; /* Altura automática */
+        border-radius: 10px; /* Bordes redondeados */
+        max-width: none; /* Eliminar el máximo ancho en móviles */
+      }
+    }
+    .basesycondiciones {
+      z-index: 50;
+    }
+  </style>
+
   <main
-    class="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-100"
+    class="min-h-screen md:min-h-9/12 bg-gray-100 flex flex-col items-center justify-center p-4 relative w-full overflow-hidden"
   >
+    <!-- Imagen de fondo general -->
+    <img src={urlImagen} alt="Autos de Rally" class="background-image rally" />
+
     <div class="max-w-3xl w-full bg-white shadow-lg rounded-lg p-6 relative">
       <h1 class="text-3xl font-bold text-center text-green-700 mb-4">
-        ✅ ¡Pago Aprobado!
+        ✅ ¡Pago Aprobado! - Verifica tus datos
       </h1>
 
-      <p class="text-center text-gray-600 mb-6">
-        Ya estás participando en el sorteo 🎉
-      </p>
+      <!-- Formulario -->
+      <div
+        class="max-w-5xl w-full bg-white rounded-lg shadow-lg flex flex-col md:flex-row border-4 border-dashed border-gray-400 relative content overflow-hidden"
+      >
+        <!-- Imagen de fondo visible solo en mobile -->
+        <div
+          class="absolute inset-0 object-contain bg-center opacity-[0.075] md:hidden"
+          style={`background-image: url(${urlImagen})`}
+        >
+        </div>
+
+        <!-- Talón lateral para corte -->
+        <div
+          class="w-full hidden md:w-1/4 bg-gray-200 md:flex flex-col justify-between border-r border-dashed border-gray-400 text-center numero-section"
+        >
+          <!-- Imagen de fondo en la sección del número -->
+          <img
+            src={imgNumSection}
+            alt="Auto Sorteo"
+            class="absolute inset-0 w-full h-full object-cover opacity-5"
+          />
+          <h2 class="text-xl font-bold pt-4 text-gray-400 relative">Número</h2>
+          <div class="text-center">
+            <p
+              id="numeroCuponInferior"
+              class="text-5xl font-bold text-black z-40"
+            >
+              {cuponNumber}
+            </p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600 pb-4 relative"></p>
+          </div>
+        </div>
+
+        <!-- Contenido principal del cupón -->
+        <div class="w-full md:w-3/4 p-6 flex flex-col justify-between relative">
+          <h1 class="text-3xl font-bold text-center text-black mb-4">
+            Bono Contribución
+          </h1>
+          <div class="flex flex-col md:flex-row gap-4">
+            <!-- Formulario -->
+            <div class="w-full md:w-1/2">
+              <form id="sorteoForm" class="space-y-2">
+                <input
+                  type="text"
+                  id="Nombre"
+                  name="Nombre"
+                  required
+                  placeholder="Nombre"
+                  class="w-full p-2 border border-gray-300 rounded text-black"
+                />
+                <input
+                  type="text"
+                  id="Apellido"
+                  name="Apellido"
+                  required
+                  placeholder="Apellido"
+                  class="w-full p-2 border border-gray-300 rounded text-black"
+                />
+                <input
+                  type="tel"
+                  id="Telefono"
+                  name="Telefono"
+                  required
+                  placeholder="Teléfono"
+                  class="w-full p-2 border border-gray-300 rounded text-black"
+                />
+                <input
+                  type="text"
+                  id="Comprobante"
+                  name="Comprobante"
+                  value={comprobante.ID}
+                  readonly
+                  placeholder={comprobante.ID || "Comprobante"}
+                  class="w-full p-2 border border-gray-300 rounded text-gray-400 italic"
+                />
+                <button
+                  type="submit"
+                  class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                  >Registrarme</button
+                >
+              </form>
+            </div>
+
+            <!-- Información de Premios y Logos -->
+            <div class="w-full md:w-1/2 text-black">
+              <h2 class="text-2xl font-bold mb-2">Premio:</h2>
+              <ul class="mb-4">
+                <li
+                  class="p-4 bg-gray-100 text-2xl text-center md:text-3xl rounded-lg shadow-md"
+                >
+                  <!-- Premio: -->
+                  <span
+                    id="primerPremio"
+                    class="font-extrabold text-red-700 hover:text-blue-900 transition-all"
+                  >
+                    {PrimerPremio}
+                  </span>
+                </li>
+                <!-- <li class="p-4 bg-gray-100 rounded-lg shadow-sm">
+                2º Premio: <span class="font-extrabold text-xl text-gray-800"
+                  >{SegundoPremio}</span
+                >
+              </li> -->
+              </ul>
+              <p class="text-sm mb-4">
+                Sorteo el <strong>{formattedFecha}</strong> en la premiación de la
+                carrera.
+              </p>
+              <div class="flex flex-wrap justify-center gap-4">
+                {
+                  logos.map((logo) => (
+                    <img
+                      src={logo.src}
+                      alt={`Logo de ${logo.title}`}
+                      class="w-16 h-auto"
+                      title={logo.title}
+                    />
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comprobante -->
+      <div class="flex flex-col items-center my-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-2">
+          📄 Comprobante de pago
+        </h2>
+        <ul class="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border">
+          <li><strong>ID de pago:</strong> {comprobante.ID}</li>
+          <li><strong>Estado:</strong> {comprobante.Estado}</li>
+          <li><strong>Tipo de pago:</strong> {comprobante.Tipo}</li>
+          <li><strong>Orden:</strong> {comprobante.Orden}</li>
+        </ul>
+      </div>
+
+      <!-- Link a Bases -->
+      <div class="text-center mt-6">
+        <a
+          href="/bases-y-condiciones"
+          class="text-sm text-gray-500 hover:text-blue-600 underline"
+        >
+          Ver bases y condiciones
+        </a>
+      </div>
+
+      <!-- Logos -->
+      <div class="flex justify-center gap-6 mt-4">
+        {
+          logos.map((logo) => (
+            <img
+              src={logo.src}
+              alt={`Logo de ${logo.title}`}
+              title={logo.title}
+              class="h-12 w-auto"
+            />
+          ))
+        }
+      </div>
     </div>
   </main>
 </Layout>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("sorteoForm");
+    const submitButton = form.querySelector("button[type='submit']");
+    const comprobanteInput = document.getElementById("Comprobante");
+
+    // Recuperar datos del localStorage
+    let localData = JSON.parse(localStorage.getItem("sorteoData") || "{}");
+
+    // Si el comprobante no está guardado, tomarlo del input
+    if (!savedData.Comprobante) {
+      savedData.Comprobante = comprobanteInput?.value || "";
+      localStorage.setItem("sorteoData", JSON.stringify(savedData));
+    }
+
+    // Cargar valores en los campos (si no tienen datos)
+    ["Nombre", "Apellido", "Telefono", "Comprobante"].forEach((field) => {
+      const input = document.getElementById(field);
+      if (input && !input.value && savedData[field]) {
+        input.value = savedData[field];
+      }
+    });
+
+    // Guardar en localStorage cuando se edite un campo
+    form.addEventListener("input", (e) => {
+      const { name, value } = e.target;
+      if (name) {
+        savedData[name] = value;
+        localStorage.setItem("sorteoData", JSON.stringify(savedData));
+      }
+    });
+    // Envío del formulario
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      submitButton.textContent = "Enviando...";
+      submitButton.disabled = true;
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Validación simple
+      const camposObligatorios = ["Nombre", "Apellido", "Telefono"];
+      const incompletos = camposObligatorios.filter((campo) => !data[campo]);
+
+      if (incompletos.length > 0) {
+        alert("Por favor, complete todos los campos.");
+        submitButton.textContent = "Registrarme";
+        submitButton.disabled = false;
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/save.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al guardar los datos");
+        }
+
+        localStorage.removeItem("sorteoData");
+        window.location.href = `/enviado?${new URLSearchParams(data).toString()}`;
+        alert("¡Formulario enviado correctamente!");
+      } catch (err) {
+        console.error("Error al enviar:", err);
+        alert("Hubo un problema al enviar el formulario.");
+      } finally {
+        submitButton.textContent = "Registrarme";
+        submitButton.disabled = false;
+      }
+    });
+  });
+</script>
