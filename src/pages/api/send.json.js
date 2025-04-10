@@ -7,7 +7,7 @@ export const POST = async ({ request }) => {
     const body = await request.json();
 
     // Leer el cuerpo de la solicitud como JSON
-    let { NumeroCupon, Nombre, Apellido, Telefono } = body;
+    let { FechaPago, Comprobante, Nombre, Apellido, Telefono } = body;
 
     // Obtener la fecha y hora actual en hora local de Argentina (UTC-3)
     const fechaActual = new Date();
@@ -30,10 +30,10 @@ export const POST = async ({ request }) => {
     // Insertar datos en la hoja
     await sheets.spreadsheets.values.append({
       spreadsheetId: GOOGLE_SHEETS_ID,
-      range: 'Sorteo!A:E', // Ajusta según tu hoja
+      range: 'OtrosComprobantes!A:F', // Ajusta según tu hoja
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [[formatoFecha, NumeroCupon, Nombre, Apellido, Telefono]],
+        values: [[formatoFecha, FechaPago, Comprobante, Nombre, Apellido, Telefono]],
       },
     });
 
