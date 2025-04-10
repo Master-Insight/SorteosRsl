@@ -7,7 +7,7 @@ export const POST = async ({ request }) => {
     const body = await request.json();
 
     // Leer el cuerpo de la solicitud como JSON
-    let { Comprobante, Nombre, Apellido, Telefono } = body;
+    let { NumeroCupon, Nombre, Apellido, Telefono } = body;
 
     // Obtener la fecha y hora actual en hora local de Argentina (UTC-3)
     const fechaActual = new Date();
@@ -33,7 +33,7 @@ export const POST = async ({ request }) => {
       range: 'Sorteo!A:E', // Ajusta según tu hoja
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [[formatoFecha, Comprobante, Nombre, Apellido, Telefono]],
+        values: [[formatoFecha, NumeroCupon, Nombre, Apellido, Telefono]],
       },
     });
 
